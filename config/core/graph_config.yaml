@@ -1,0 +1,248 @@
+# ═══════════════════════════════════════════
+# 그래프 라우팅 설정
+# ═══════════════════════════════════════════
+routing:
+  # 처리 모드 판정 설정 (LLM mode determination)
+  # - 목적: 섹션별 user_request가 generation/correction/skip 중 무엇인지 결정
+  # - 기본은 single(단건) 판정이며, batch로 설정하면 LLM이 필요한 케이스만 모아 청크 단위로 배치 호출
+  mode_determination:
+    # "single" | "batch"
+    strategy: "batch"
+    batch:
+      # 규칙 기반으로 확정 가능한 케이스는 제외하고, LLM이 필요한 케이스만 batch 대상으로 취합
+      only_llm_needed: true
+      # 한 번의 배치 호출에 포함할 항목 수
+      batch_size: 8
+      # 배치 호출/파싱 실패 시 단건 방식으로 fallback
+      fallback_to_single: true
+
+  # 섹션 서브그래프 품질 검증 후 라우팅 설정
+  section_quality_validation:
+    # major_revision 평가 시 실제로 라우팅할 노드
+    # "generate" | "correct" 중 선택
+    major_revision_target: "correct"  # 기본값: "correct"
+    
+    # minor_correction 평가 시 실제로 라우팅할 노드
+    minor_correction_target: "correct"  # 기본값: "correct"
+    
+    # sufficient 평가 시 실제로 라우팅할 노드
+    sufficient_target: "finalize"  # 기본값: "finalize"
+
+  # topic_key별 검증 옵션 설정
+  topic_validation_options:
+    # 기본값 (모든 topic_key에 적용)
+    default:
+      enable_validate_search: false
+      enable_validate_generation: true
+      enable_validate_quality: false
+    
+    # 특정 topic_key별 오버라이드 예시
+    # company_overview:
+    #   enable_validate_search: false
+    #   enable_validate_generation: true
+
+  # node_validate_response_pattern 항목별 패턴 검증 on/off
+  # - 기본값은 모두 true
+  # - topic_key별 / preset별로 오버라이드 가능 (topic_validation_options, pattern_validation과 동일한 우선순위)
+  pattern_checks:
+    default:
+      # 다국어 문자 검증
+      check_chinese_chars: true
+      check_japanese_chars: true
+      
+      # 마크다운 테이블 형식 검증
+      check_markdown_table_format: true
+      
+      # 참조 문서키 검증 (3분할)
+      check_reference_presence_and_position: false # 문단/테이블 마지막 행에 [^KEY] 존재 및 위치/형식
+      check_reference_key_whitelist: true          # 검색 결과(reference_keys) 외 문서키 사용 금지
+      check_reference_key_whitespace: false         # [^K EY] 등 공백 포함 금지
+      
+      # 커스텀 패턴 규칙(pattern_validation.rules) 실행 여부
+      check_custom_patterns: true
+    
+    # 특정 topic_key별 오버라이드 예시
+    # company_overview:
+    #   check_markdown_table_format: false
+    #   check_custom_patterns: false
+    #   check_reference_key_whitelist: true
+
+  # 커스텀 패턴 검증 규칙 설정
+  pattern_validation:
+    # 기본값 (모든 topic_key에 적용)
+    default:
+      enabled: true
+      rules: []
+        # 규칙 예시:
+        # - id: forbid_email
+        #   type: forbid_regex
+        #   pattern: "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"
+        #   message: "이메일 주소 제거 필요"
+        #   severity: minor  # minor | major
+        #   flags: []  # IGNORECASE, MULTILINE 등 (선택적)
+        # 
+        # - id: require_any_reference
+        #   type: require_regex
+        #   pattern: "\\[\\^[A-Z0-9]+\\]"
+        #   message: "출처([^KEY])가 전혀 없음"
+        #   severity: major
+    
+    # 특정 topic_key별 오버라이드 예시
+    # company_overview:
+    #   enabled: true
+    #   rules:
+    #     - id: forbid_url
+    #       type: forbid_regex
+    #       pattern: "https?://[^\\s]+"
+    #       message: "URL 제거 필요"
+    #       severity: minor
+
+# ═══════════════════════════════════════════
+# 재시도/키워드/메시지/영역 매핑 설정
+# ═══════════════════════════════════════════
+retry_settings:
+  llm_retry:
+    empty_response_delay: 0.1
+    exception_delay: 0.5
+  section_search_validate:
+    max_attempts: 3
+  section_search:
+    max_rounds: 3
+    force_sufficient_on_max_rounds: true
+  section_validation:
+    max_attempts: 3
+  comprehensive_opinion:
+    max_attempts: 3
+    min_length: 100
+  financial_analysis:
+    max_attempts: 3
+  mode_determination:
+    max_attempts: 3
+
+keywords:
+  search_detection:
+    - "검색"
+    - "찾"
+  processing_mode:
+    generation:
+      - "다시 작성"
+      - "재작성"
+      - "새로 작성"
+      - "전체 재작성"
+      - "새로운 데이터"
+      - "추가된 데이터"
+      - "최근 데이터"
+      - "최신 데이터"
+      - "신규 데이터"
+      - "완전히 새로"
+      - "처음부터"
+      - "전체적으로"
+      - "다시 생성"
+      - "파일 삭제"
+      - "파일 업데이트"
+    correction:
+      - "수정"
+      - "변경"
+      - "교정"
+      - "보정"
+      - "고쳐"
+      - "바꿔"
+      - "일부"
+
+# ═══════════════════════════════════════════
+# processing_mode별 primary 토픽 키 (표시 순서와 분리)
+# ═══════════════════════════════════════════
+#
+# 목적:
+# - 같은 processing_mode의 토픽이 여러 개 존재할 수 있어도, "특례 처리" 대상(primary)를
+#   YAML 순서와 무관하게 안정적으로 고정합니다.
+# - 예: financial/opinion 토픽은 여러 개일 수 있으나, 통합/복원/모드판정 등에서
+#   primary 1개만 특례 처리하도록 통일합니다.
+#
+# 동작:
+# - 키가 없거나, 존재하더라도 DOCUMENT_TOPICS에 없거나 processing_mode가 불일치하면
+#   기존 방식(YAML 순서 기반 첫 번째)으로 fallback합니다.
+primary_topic_keys:
+  financial: "financial_status"
+  opinion: "comprehensive_opinion"
+
+area_mapping:
+  manager_opinion_documents:
+    report_title: "영업점장 의견"
+    child_title_style: "numbered"   # numbered | bullet
+    aliases:
+      - "영업점장의견"
+      - "영업점장 의견"
+  investigation_documents:
+    report_title: "주요조사내용"
+    child_title_style: "bullet"
+    bullet_prefix: "● "
+    aliases:
+      - "주요조사내용"
+  affiliates_documents:
+    report_title: "관계사 현황"
+    child_title_style: "bullet"
+    bullet_prefix: "● "
+    aliases:
+      - "관계사 현황"
+      - "관계사현황"
+
+messages:
+  content_not_available: "※ 본 항목에 대한 정보를 생성할 수 없습니다. 필요한 경우 직접 입력해주세요."
+  non_llm_correction_skip_reason: "이 항목은 자동 수정이 지원되지 않아 건너뛰었어요. 필요하면 직접 수정해 주세요."
+  llm_failure_prefix: "LLM 호출 실패"
+  opinion_user_request_label: "[사용자 요청]"
+
+placeholder_reasons:
+  no_search_results: "검색된 문서가 없어 정보를 생성할 수 없습니다."
+  file_type_policy_denied: "설정된 문서 유형 정책으로 인해 검색 결과가 없습니다."
+  no_llm_client: "LLM 클라이언트가 없어 응답을 생성할 수 없습니다."
+  no_response_generated: "LLM에서 응답을 생성하지 못했습니다."
+  search_fallback_ok: "사업보고서에서 확인할 만한 근거가 없어 업종 리포트 참고 내용으로 대체했습니다."
+  search_fallback_empty: "업종 정보가 확인되지 않아 보조 자료를 불러오지 못했습니다."
+  search_fallback_disabled: "보조 자료 폴백이 비활성화되어 있습니다."
+  fin_summary_table_no_periods: "기간 정보가 없어 재무요약 테이블을 생성할 수 없습니다."
+  fin_status_no_interpretations: "서브태스크 해석/지표가 없어 재무현황을 생성할 수 없습니다."
+  other: "정보를 생성할 수 없습니다."
+
+# 프리셋별 라우팅 설정 (선택적)
+presets:
+  production:
+    routing:
+      mode_determination:
+        strategy: "batch"
+        batch:
+          only_llm_needed: true
+          batch_size: 20
+          fallback_to_single: true
+      section_quality_validation:
+        major_revision_target: "generate"  # 프로덕션에서는 재생성
+      topic_validation_options:
+        default:
+          enable_validate_search: true
+          enable_validate_generation: true
+          enable_validate_quality: true
+      pattern_validation:
+        default:
+          enabled: true
+          rules: []
+  development:
+    routing:
+      mode_determination:
+        strategy: "single"
+        batch:
+          only_llm_needed: true
+          batch_size: 20
+          fallback_to_single: true
+      section_quality_validation:
+        major_revision_target: "correct"  # 개발에서는 수정
+      topic_validation_options:
+        default:
+          enable_validate_search: true
+          enable_validate_generation: true
+          enable_validate_quality: true
+      pattern_validation:
+        default:
+          enabled: true
+          rules: []
+

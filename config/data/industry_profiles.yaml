@@ -1,0 +1,33 @@
+default_profile: default
+
+detail_name_mapping:
+  "전자부품 실장기판 제조업": mfg_electronics
+  "슈퍼마켓 및 잡화점": retail_grocery
+
+default:
+  name: 기본
+  description: 업종 미지정 또는 일반 기업용
+  interpret:
+    interpret_guidance: ""
+    # 비어 있음(null/[]) → 업종 특화 on-demand 지표 계산 생략
+    metrics_to_use: []
+    integration_guidance: ""
+
+mfg_electronics:
+  name: 제조업(전자·자본집약)
+  interpret:
+    interpret_guidance: |
+      - 유형자산·고정자산회전율로 설비투자 대비 매출 효율을 해석할 것.
+      - CCC·재고/매출채권 회전기간은 업계평균 대비 편차가 있을 때만 언급.
+      - 자산구조와 현금창출력을 중심으로, 업계 대비 상대적 위치를 서술.
+    metrics_to_use: [부채비율, 차입금의존도, 유형자산, EBITDA, 영업활동현금흐름]
+    integration_guidance: "업종 특화 분석은 자산·현금흐름 관점을 통합문 앞부분에 요약 반영할 것."
+
+retail_grocery:
+  name: 유통·리테일
+  interpret:
+    interpret_guidance: |
+      - 마진보다 재고/매출채권 회전과 현금화(CCC)를 우선 평가.
+      - 회전율·현금전환주기 중심으로 유동성과 현금화 속도를 해석.
+    metrics_to_use: [매출총이익률, 재고자산회전기간(일), 매출채권회전기간(일), CCC (현금전환주기)]
+    integration_guidance: "업종 특화 분석은 회전율·현금화 속도를 통합문에 짧게 반영할 것."

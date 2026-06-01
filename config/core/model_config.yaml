@@ -1,0 +1,235 @@
+models:
+  # 기본 설정 - 모든 노드 타입 정의
+  default:
+    # 최종처리 모델 (처리 중 이슈 발생 시 사용)
+    final: "google/gemma-4-31b-it"
+
+    # 공통
+    mode_determination: "google/gemma-4-26b-a4b-it"
+
+    # 재무 분석 도메인
+    financial_interpret: "google/gemma-4-31b-it"
+    financial_integrate: "google/gemma-4-31b-it"
+    financial_validate: "google/gemma-4-31b-it"
+    financial_correct: "google/gemma-4-26b-a4b-it"
+    
+    # 섹션별 내용 작성 도메인
+    section_search_validate: "google/gemma-4-26b-a4b-it"
+    section_generate: "google/gemma-4-31b-it"
+    section_correct: "google/gemma-4-26b-a4b-it"
+    section_validate: "google/gemma-4-31b-it"
+
+    # 종합 의견
+    should_update_opinion: "google/gemma-4-26b-a4b-it"
+    section_opinion: "google/gemma-4-31b-it"
+
+  # topic_key별 모델 오버라이드 (선택적)
+  # - 사용 예시:
+  topics:
+    credit_main:
+      section_generate: "google/gemma-4-26b-a4b-it"
+    management_analysis:
+      section_generate: "google/gemma-4-26b-a4b-it"
+    company_overview2:
+      section_generate: "google/gemma-4-26b-a4b-it"
+  # topics: {}
+
+# ═══════════════════════════════════════════
+# Provider 설정 (멀티 벤더 지원)
+# ═══════════════════════════════════════════
+providers:
+  # 기본 Provider (OpenAI 호환)
+  default:
+    provider: "openai_compat"
+    api_key_env: "LLM_API_KEY"
+    default_model: "google/gemma-4-26b-a4b-it"
+    use_async: true
+  
+  # Anthropic (Claude)
+  anthropic:
+    provider: "anthropic"
+    base_url: "https://api.anthropic.com/v1/"
+    api_key_env: "ANTHROPIC_API_KEY"
+    default_model: "claude-sonnet-4-5"
+    use_async: true
+  
+  # Google Gemini (OpenAI 호환 엔드포인트 사용)
+  gemini:
+    provider: "gemini"
+    base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
+    api_key_env: "GEMINI_API_KEY"
+    default_model: "gemini-2.0-flash"
+    use_async: false
+
+# ═══════════════════════════════════════════
+# 모델별 실행 설정 (concurrency_limit, timeout)
+# ═══════════════════════════════════════════
+model_settings:
+  # 기본값 (모델별 설정이 없을 때 사용)
+  default:
+    concurrency_limit: 8
+    timeout: 60
+  
+  # 모델별 설정
+  models:
+    "google/gemma-4-26b-a4b-it":
+      concurrency_limit: 16
+      timeout: 30
+    "google/gemma-4-31b-it":
+      concurrency_limit: 8
+      timeout: 60
+  
+# ═══════════════════════════════════════════
+# 라우터 설정 (OpenAI 호환 전용)
+# ═══════════════════════════════════════════
+routers:
+  # 기본 라우터 설정 (환경변수가 없을 때 사용)
+  default:
+    base_url: "http://192.15.80.54:28010"
+    router_mode: false  # 기본값은 false (기존 방식)
+    platform: "groq"  # router 모드일 때 플랫폼 지정 (openai, groq, vllm 중 선택)
+    include_model: true  # 라우터 모드일 때 모델명을 요청에 포함할지 여부 (기본값: false)
+    endpoints:
+      "google/gemma-4-26b-a4b-it": "/llm-light"
+      "google/gemma-4-31b-it": "/llm-booster"
+  
+
+# ═══════════════════════════════════════════
+# LLM 파라미터 설정
+# ═══════════════════════════════════════════
+parameters:
+  # 전역 기본값
+  default:
+    temperature: 0.1
+    max_tokens: 4096
+    top_p: 0.9
+    # top_k: 50
+    # repetition_penalty: 1.1
+  
+  # 노드 타입별 오버라이드 (선택적)
+  node_types:
+    financial_interpret:
+      max_tokens: 8192
+  
+  # topic_key별 오버라이드 (선택적)
+  # - 기본 구조:
+  # topics:
+  #   {topic_key}:
+  #     default: { ... }
+  #     node_types:
+  #       {node_type}: { ... }
+  topics: {}
+
+# ═══════════════════════════════════════════
+# MCP / Responses 설정
+# ═══════════════════════════════════════════
+mcp:
+  servers:
+    # HTTP(streamable) - 서버를 http://localhost:4200/mcp 에 띄워 사용
+    - label: cla_mcp_external
+      transport: http
+      url: http://localhost:4200/mcp
+      allowlist: ["calculate_multiple", "get_time"]
+      auth_header: null
+    - label: web_search_preview
+      transport: http
+      url: http://localhost:4201/mcp
+      allowlist: ["documents_search_tool", "documents_get_by_index_tool"]
+      auth_header: null
+    # 라이브러리 모드 (in-memory, 별도 서버 불필요)
+    - label: cla_mcp_internal
+      transport: stdio
+      config_path: "./mcp/config.yaml"
+      allowlist: ["calculate_multiple", "get_time"]
+
+features:
+  models:
+    "google/gemma-4-26b-a4b-it":
+      use_responses_api: true
+      supports_mcp: true
+      stateless_history: true
+    "google/gemma-4-31b-it":
+      use_responses_api: true
+      supports_mcp: true
+      stateless_history: true
+
+# Chat/Completions 등에 넘길 선택 파라미터 키 allowlist (어댑터:플랫폼).
+# tools / tool_choice / messages / model 은 어댑터 로직으로 처리되며 이 목록과 무관하게 전달됩니다.
+request_param_profiles:
+  version: 1
+  profiles:
+    # OpenAI Chat: 샘플링·길이·도구 병렬·추론·로그프롭·티어 등 (오디오/스토어/metadata 등 특수 필드는 제외)
+    "openai_compat:openai":
+      allow:
+        - frequency_penalty
+        - logit_bias
+        - logprobs
+        - max_completion_tokens
+        - max_tokens
+        - n
+        - parallel_tool_calls
+        - presence_penalty
+        - reasoning_effort
+        - response_format
+        - seed
+        - service_tier
+        - stop
+        - stream_options
+        - temperature
+        - top_logprobs
+        - top_p
+        - user
+    # Groq: 문서화된 Chat 본문 필드 중 compound/툴 검증 스킵 등 고급 옵션은 제외. logprobs·logit_bias·top_logprobs 미지원.
+    "openai_compat:groq":
+      allow:
+        - citation_options
+        - documents
+        - frequency_penalty
+        - include_reasoning
+        - max_completion_tokens
+        - max_tokens
+        - n
+        - parallel_tool_calls
+        - presence_penalty
+        - reasoning_effort
+        - reasoning_format
+        - response_format
+        - search_settings
+        - seed
+        - service_tier
+        - stop
+        - stream_options
+        - temperature
+        - top_p
+        - user
+    # vLLM: 빔·프롬프트 로그프롭·토큰 허용/금지·EOS 무시 등 고급 샘플링은 제외
+    "openai_compat:vllm":
+      allow:
+        - add_generation_prompt
+        - continue_final_message
+        - frequency_penalty
+        - logit_bias
+        - logprobs
+        - max_tokens
+        - min_p
+        - min_tokens
+        - n
+        - parallel_tool_calls
+        - presence_penalty
+        - repetition_penalty
+        - response_format
+        - seed
+        - stop
+        - stop_token_ids
+        - structured_outputs
+        - temperature
+        - top_k
+        - top_p
+        - truncate_prompt_tokens
+    "openai_compat:unknown":
+      policy: permissive
+      allow: []
+    "gemini:default":
+      allow: [temperature, top_p, max_tokens, stop, seed, response_format, tools, tool_choice]
+    "anthropic:default":
+      allow: [temperature, top_p, max_tokens, stop, seed, tools, tool_choice]

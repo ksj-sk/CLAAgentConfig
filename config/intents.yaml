@@ -1,0 +1,13 @@
+processing:
+  - GENERATE_REPORT
+  - REGENERATE_FROM_UPDATED_FILES
+  - MODIFY_TOPIC
+  - NONE
+
+conversation:
+  - EXPLAIN_TOPIC
+  - GENERAL_QA
+  - SMALL_TALK
+  - OUT_OF_SCOPE
+  - NONE
+

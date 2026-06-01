@@ -1,0 +1,7 @@
+errors:
+  no_files: "파일이 하나도 없습니다"
+
+sse:
+  stream_opened: "SSE stream opened"
+  stream_finished: "SSE stream finished"
+

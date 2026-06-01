@@ -1,0 +1,24 @@
+patterns:
+  room: "room:{room_key}"
+  core: "room:{room_key}:core"
+  files: "room:{room_key}:files"
+  corpus_mapping: "room:{room_key}:{corpus_key}"
+  corpus_hash_to_file: "room:{room_key}:{corpus_hash_key}"
+  search: "room:{room_key}:search"
+  report_final: "room:{room_key}:report:final"
+  report_history: "room:{room_key}:report:history:{topic_key}"
+  topics: "room:{room_key}:topics"
+  last_intents: "room:{room_key}:last_intents"
+  last_target_topics: "room:{room_key}:last_target_topics"
+
+  # LangGraph checkpointer (RedisCheckpointSaver)
+  # - thread_id는 room_key를 사용
+  # - checkpoint_ns는 기본 "" (configurable.checkpoint_ns)
+  cp_index: "cpidx:{thread_id}:{checkpoint_ns}"
+  cp: "cp:{thread_id}:{checkpoint_ns}:{checkpoint_id}"
+  blob: "blob:{thread_id}:{checkpoint_ns}:{channel}:{version}"
+  writes: "writes:{thread_id}:{checkpoint_ns}:{checkpoint_id}"
+
+  # 대화 기록 (별도 저장소)
+  conversation_messages: "room:{room_key}:conversation:messages"
+

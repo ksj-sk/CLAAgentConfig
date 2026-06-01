@@ -1,0 +1,109 @@
+cla_core:
+  logging:
+    # 로그 레벨: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    level: "DEBUG"
+    
+    # 로거 이름
+    name: "cla_core"
+    
+    # 콘솔 핸들러 설정
+    console:
+      enabled: true
+      level: "INFO"
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+    
+    # 파일 핸들러 설정
+    file:
+      enabled: true
+      level: "DEBUG"
+      # 로그 파일 경로 (상대 경로는 프로젝트 루트 기준)
+      path: "logs/cla_core.log"
+      # 로테이션 타입: "size" (크기 기반) 또는 "timed" (시간 기반)
+      rotation_type: "timed"
+      # 시간 기반 로테이션 설정 (rotation_type이 "timed"일 때 사용)
+      when: "midnight"  # "S", "M", "H", "D", "midnight", "W0"-"W6"
+      interval: 1  # 로테이션 간격 (when과 함께 사용)
+      backup_count: 0  # 보관할 백업 파일 개수 (0이면 무제한)
+      # 크기 기반 로테이션 설정 (rotation_type이 "size"일 때 사용)
+      max_bytes: 10485760  # 로그 파일 최대 크기 (바이트 단위, 예: 10MB = 10485760)
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+      # 로그 파일 디렉토리 자동 생성 여부
+      create_dir: true
+
+cla_langgraph:
+  logging:
+    # 로그 레벨: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    level: "DEBUG"                   # 더 상세한 로그
+    
+    # 로거 이름
+    name: "cla_langgraph"
+    
+    # 콘솔 핸들러 설정
+    console:
+      enabled: true
+      level: "INFO"               # 콘솔에는 경고 이상만
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+    
+    # 파일 핸들러 설정
+    file:
+      enabled: true
+      level: "DEBUG"                 # 파일에는 모든 로그
+      # 로그 파일 경로 (상대 경로는 프로젝트 루트 기준)
+      path: "logs/cla_langgraph.log"        # 커스텀 로그 파일명
+      # 로테이션 타입: "size" (크기 기반) 또는 "timed" (시간 기반)
+      rotation_type: "timed"
+      # 시간 기반 로테이션 설정 (rotation_type이 "timed"일 때 사용)
+      when: "midnight"               # "S", "M", "H", "D", "midnight", "W0"-"W6"
+      interval: 1                    # 로테이션 간격 (when과 함께 사용)
+      backup_count: 0                # 보관할 백업 파일 개수 (0이면 무제한)
+      # 크기 기반 로테이션 설정 (rotation_type이 "size"일 때 사용)
+      max_bytes: 10485760            # 최대 파일 크기 (10MB)
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+      # 로그 파일 디렉토리 자동 생성 여부
+      create_dir: true               # 로그 디렉토리 자동 생성
+
+chat_langgraph:
+  logging:
+    level: "DEBUG"                   # 더 상세한 로그
+    
+    console:
+      enabled: true
+      level: "INFO"               # 콘솔에는 경고 이상만
+    
+    file:
+      enabled: true
+      level: "DEBUG"                 # 파일에는 모든 로그
+      path: "logs/chat_langgraph.log"        # 커스텀 로그 파일명
+      rotation_type: "timed"
+      when: "midnight"               # "S", "M", "H", "D", "midnight", "W0"-"W6"
+      interval: 1                    # 로테이션 간격 (when과 함께 사용)
+      backup_count: 0                # 보관할 백업 파일 개수 (0이면 무제한)
+      max_bytes: 10485760            # 최대 파일 크기 (10MB)
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+      create_dir: true               # 로그 디렉토리 자동 생성
+
+parser_langgraph:
+  logging:
+    level: "DEBUG"                   # 더 상세한 로그
+    
+    console:
+      enabled: true
+      level: "INFO"               # 콘솔에는 경고 이상만
+    
+    file:
+      enabled: true
+      level: "DEBUG"                 # 파일에는 모든 로그
+      path: "logs/parser_langgraph.log"        # 커스텀 로그 파일명
+      rotation_type: "timed"
+      when: "midnight"               # "S", "M", "H", "D", "midnight", "W0"-"W6"
+      interval: 1                    # 로테이션 간격 (when과 함께 사용)
+      backup_count: 0                # 보관할 백업 파일 개수 (0이면 무제한)
+      max_bytes: 10485760            # 최대 파일 크기 (10MB)
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+      create_dir: true               # 로그 디렉토리 자동 생성

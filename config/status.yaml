@@ -1,0 +1,28 @@
+values:
+  - INIT
+  - COMPANY_LOCKED
+  - FILES_READY
+  - REPORT_EXISTS
+  - PROCESSING
+  - ERROR
+
+default: INIT
+
+transitions:
+  # INIT 또는 COMPANY_LOCKED 상태에서
+  from_init_or_locked:
+    - INIT
+    - COMPANY_LOCKED
+  # 필수파일만 파싱된 경우
+  only_required_files:
+    to: COMPANY_LOCKED
+  # 필수파일 + 기타 파일이 1개 이상 함께 파싱된 경우
+  required_and_other_files:
+    to: FILES_READY
+  # FILES_READY 또는 REPORT_EXISTS 상태에서
+  from_ready_or_exists:
+    - FILES_READY
+    - REPORT_EXISTS
+  # 추가 파일 파싱 시 status 유지
+  maintain_status: true
+

@@ -1,0 +1,13 @@
+chat.progress: 0
+file.progress: 1
+file.error: 1
+reply.token: 2
+reply.done: 2
+draft.progress: 3
+draft.error: 3
+report.final: 4
+closing.token: 5
+closing.done: 5
+preset.cue: 5
+chat.done: 6
+

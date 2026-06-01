@@ -1,0 +1,74 @@
+# 파일 서비스 설정
+file:
+  default_filename: "unnamed"  # 파일명이 없을 때 기본값
+  allowed_chars: "a-zA-Z0-9._- "  # 허용할 문자 (정규식)
+  replace_char: "_"  # 금지 문자를 대체할 문자
+
+# Chat Service 공통 설정
+chat_service:
+  # model_config.yaml의 presets(routers/model_settings/models/parameters) 오버라이드에 사용 (optional)
+  # - 미설정/빈 값이면 preset=None으로 처리하여 routers.default 등을 사용합니다.
+  preset: null
+
+# 노드별 비즈니스 로직 설정 (모델/파라미터는 config/core/model_config.yaml로 이동)
+nodes:
+  cla_planner:
+    # planner에 넣을 report 컨텍스트 형식
+    # - full: report_final 전체 JSON
+    # - outline: 비LLM 방식(구조적 축약)으로 topic_key/title/content preview만 전달
+    report_context_mode: "full"  # "full" | "outline"
+    recent_turns: 3  # Planner에 전달할 최근 대화 턴 수 (기본: 3턴)
+
+    report_outline:
+      content_preview_chars: 400
+      include_ref_keys: false
+
+    # planner 2-pass guardrails (validator -> repair -> (optional) hard fallback)
+    validation_enabled: true
+    repair_enabled: true
+    repair_max_attempts: 1
+    hard_fallback_enabled: false
+
+  cla_responder:
+    # responder에 넣을 report 컨텍스트 형식
+    # - full: report_final 전체 JSON
+    # - outline: 비LLM 방식(구조적 축약)으로 topic_key/title/content preview만 전달
+    # - section_title: report_final.report에서 title이 일치하는 섹션만 전달 (예: "영업점장 의견")
+    # - topic_only: explain_context(= Redis report_topic 최신본 등) 기반으로 해당 topic만 요약 전달
+    # - none: report_final 제외
+    #
+    # 정책(기본):
+    # - reply: outline
+    # - closing: 영업점장 의견(section_title)
+    # - explain(EXPLAIN_TOPIC): topic_only (report_final을 크게 넣지 않음)
+    report_context_mode_reply: "outline"          # "outline" | "none" | "full"
+    report_context_mode_closing: "section_title"  # "section_title" | "outline" | "none" | "full"
+    report_context_section_title: "영업점장 의견"
+    report_context_include_references: false
+    report_context_mode_when_explain: "topic_only"
+
+    report_outline:
+      # 토큰 기준 목표(예: 400 tokens)를 문자로 근사해 운영한다.
+      # - 한국어 문장/숫자 혼합에 따라 토큰 효율이 달라질 수 있어 보수적으로 짧게 잡는다.
+      content_preview_chars: 1200
+      include_ref_keys: false
+
+    use_prompt_budget: true
+
+    observability:
+      log_prompt_sizes: true
+
+  cla_conversation_summary:
+    max_summary_turns: 10  # 요약 생성 시 포함할 최대 턴 수 (10턴 넘으면 최근 10턴 요약, 기본: 10턴)
+
+# 전역 프롬프트 예산/재시도 (토큰 기준, 구현은 1차로 문자 근사 + 로깅으로 튜닝)
+prompt_budget:
+  max_total_tokens: 16000
+  # history 예산(토큰) - history 먼저 축소: 4000 → 2000 → 800
+  history_budget_tokens_by_retry: [4000, 2000, 800]
+  default_history_budget_tokens_by_retry: [4000, 2000, 800]
+  # 토큰→문자 근사 계수(보수적으로)
+  chars_per_token: 2
+  min_history_user_turns: 1
+  retry_http_statuses: [400, 413, 422]
+

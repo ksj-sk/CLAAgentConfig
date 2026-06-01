@@ -1,0 +1,1451 @@
+_defaults:
+  # metric에 triggers가 없을 때 적용되는 기본 트리거
+  # - `_defaults` 자체가 없으면: 모든 지표를 해석 테이블에 포함(필터링 없음)
+  # - metric별 triggers가 있으면: defaults는 무시하고 metric triggers만 사용
+  # 해석 테이블 상단에 출력할 단위 안내(선택)
+  unit_note: "금액=백만원, 비율/율/증가율=%, 배수=배, 기간=일"
+  period_change_thresholds:
+    ratio: 5.0
+    amount: 10.0
+    multiple: 0.5
+    days: 30.0
+    default: 5.0
+  triggers:
+    mode: when_triggered
+    combine: any
+    conditions:
+    - type: period_change_threshold
+      measure: auto
+    - type: sign_cross_zero
+
+base:
+  name: 기본 계산
+  metrics:
+    부채총계:
+      formula: 유동부채 + 비유동부채
+      sources:
+      - 유동부채
+      - 비유동부채
+      description: 부채 총액
+    자본총계:
+      formula: 자산총계 - 부채총계
+      sources:
+      - 자산총계
+      - 부채총계
+      description: 자본 총액
+    EBIT:
+      formula: 영업이익 + 영업외수익 - 영업외비용
+      sources:
+      - 영업이익
+      - 영업외수익
+      - 영업외비용
+      description: ''
+    조정형EBIT:
+      formula: 영업이익 + (영업외수익 - 이자수익) - (영업외비용 - 이자비용)
+      sources:
+      - 영업이익
+      - 영업외수익
+      - 이자수익
+      - 영업외비용
+      - 이자비용
+      description: 순수 영업기반 수익성
+    원리금상환액:
+      formula: (영업활동현금흐름 + 이자비용) / DSCR
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      - DSCR
+      description: ''
+dcs:
+  name: 부채/자본 구조
+  interpret_guidance: |
+    - 자본구조·부채 관련 지표는 총차입금·유동·비유동 부채 등 하위 항목 변동과 연결해 서술할 것.
+    - 부채비율은 본문에서 직접 언급하지 말고, 자기자본비율·차입금의존도 등으로 완곡히 설명할 것.
+  # 복합 해석 그룹: 트리거된 지표와 연계해 보조 지표/관점을 확장
+  # # 복합 해석 그룹: 트리거된 지표와 연계해 보조 지표/관점을 확장
+  # interpretation_groups:
+  # - group_id: dcs_short_term_liquidity_risk
+  #   activation_metrics:
+  #   - 유동비율
+  #   - 유동부채비중
+  #   include_metrics:
+  #   - 유동부채
+  #   - 운전자본
+  #   - 유동비율
+  #   guidance_text: 유동부채 증가가 운전자본 악화와 유동비율 하락으로 이어지면 단기재무위험이 커질 수 있다.
+  #   enabled: true
+  metrics:
+    부채비율:
+      formula: 부채총계 / 자본총계 × 100
+      sources:
+      - 부채총계
+      - 자본총계
+      description: 자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음
+      value_type: ratio
+      triggers:
+        mode: when_triggered
+        combine: any
+        conditions:
+        - type: period_change_threshold
+          measure: auto
+        - type: sign_cross_zero
+    자기자본비율:
+      formula: 자본총계 / 자산총계 × 100
+      sources:
+      - 자본총계
+      - 자산총계
+      description: 자본구조 안정성
+      value_type: ratio
+      triggers:
+        mode: when_triggered
+        combine: any
+        conditions:
+        - type: period_change_threshold
+          measure: auto
+        - type: sign_cross_zero
+    차입금의존도:
+      formula: 총차입금 / 자산총계 * 100
+      sources:
+      - 총차입금
+      - 자산총계
+      description: 전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호
+      value_type: ratio
+      triggers:
+        mode: when_triggered
+        combine: any
+        conditions:
+        - type: period_change_threshold
+          measure: absolute_points
+          threshold: 3.0
+        - type: sign_cross_zero
+    총차입금:
+      formula: null
+      sources:
+      - 총차입금
+      description: 전체 금융부채 규모
+      value_type: amount
+      triggers:
+        mode: when_triggered
+        combine: any
+        conditions:
+        - type: period_change_threshold
+          measure: absolute
+          threshold: 500.0
+        - type: period_change_threshold
+          measure: relative_percent
+          threshold: 10.0
+        - type: sign_cross_zero
+    Net Debt:
+      formula: 총차입금 - 총현금예금
+      sources:
+      - 총차입금
+      - 총현금예금
+      description: 순금융부채 규모
+      value_type: amount
+      triggers:
+        mode: when_triggered
+        combine: any
+        conditions:
+        - type: period_change_threshold
+          measure: absolute
+          threshold: 500.0
+        - type: period_change_threshold
+          measure: relative_percent
+          threshold: 10.0
+        - type: sign_cross_zero
+    순차입금비율:
+      formula: Net Debt / 자본총계 * 100
+      sources:
+      - Net Debt
+      - 자본총계
+      description: 순부채가 자기자본에 미치는 부담 수준을 나타내며, 20% 이하이면 안정적
+      value_type: ratio
+    유동부채비중:
+      formula: 유동부채 / 부채총계 * 100
+      sources:
+      - 유동부채
+      - 부채총계
+      description: 단기부채 집중도
+      value_type: ratio
+    차입금 비중:
+      formula: 총차입금 / 부채총계 * 100
+      sources:
+      - 총차입금
+      - 부채총계
+      description: 부채 중 금융성 부채 비율
+      value_type: ratio
+    유형자산비율:
+      formula: 유형자산 / 자산총계 * 100
+      sources:
+      - 유형자산
+      - 자산총계
+      description: 자산 구조의 고정성 판단
+      value_type: ratio
+    유동비율:
+      formula: 유동자산 / 유동부채 * 100
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단
+      value_type: ratio
+      triggers:
+        mode: when_triggered
+        combine: any
+        conditions:
+        - type: period_change_threshold
+          measure: auto
+        - type: sign_cross_zero
+irc_ocf:
+  name: 이자상환능력 및 영업현금흐름
+  interpret_guidance: |
+    - 이자·원리금 상환 여력은 영업이익·영업활동현금흐름·이자비용 간 관계를 표 수치에 근거해 연결할 것.
+    - DSCR·이자보상배율·현금이자보상배율 중 변동이 큰 지표를 우선 반영할 것.
+  metrics:
+    이자보상배율:
+      formula: 영업이익 / 이자비용
+      sources:
+      - 영업이익
+      - 이자비용
+      description: 영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적
+      value_type: multiple
+    DSCR:
+      formula: (영업활동현금흐름 + 이자비용) / (이자비용 + 원리금상환액)
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      - 원리금상환액
+      description: 현금창출로 부채상환 가능성
+      value_type: multiple
+    Cash Flow to Debt:
+      formula: 영업활동현금흐름 / 부채총계
+      sources:
+      - 영업활동현금흐름
+      - 부채총계
+      description: 부채 대비 현금창출 비율
+      value_type: ratio
+    차입금/EBITDA:
+      formula: 총차입금 / EBITDA
+      sources:
+      - 총차입금
+      - EBITDA
+      description: 차입금 상환 기간 추정
+      value_type: ratio
+    금융비용부담율:
+      formula: 이자비용 / 매출액 * 100
+      sources:
+      - 이자비용
+      - 매출액
+      description: 매출 대비 이자비용 부담
+      value_type: ratio
+    현금이자보상배율:
+      formula: 영업활동현금흐름 / 이자비용
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      description: 실제 현금기반 상환여력
+      value_type: multiple
+    영업이익 대비 현금창출율:
+      formula: 영업활동현금흐름 / 영업이익 * 100
+      sources:
+      - 영업활동현금흐름
+      - 영업이익
+      description: 회계상 영업이익의 현금화 정도
+      value_type: ratio
+inv_bas:
+  name: 투자 및 사업 인수 현황
+  metrics:
+    비유동자산:
+      formula: null
+      sources:
+      - 비유동자산
+      description: 투자 구조의 성격
+      value_type: amount
+    유형자산:
+      formula: null
+      sources:
+      - 유형자산
+      description: 투자 구조의 성격
+      value_type: amount
+    총자산회전율:
+      formula: 매출액 / 자산총계
+      sources:
+      - 매출액
+      - 자산총계
+      description: 자산활용 효율
+      value_type: ratio
+    고정자산회전율:
+      formula: 매출액 / 유형자산
+      sources:
+      - 매출액
+      - 유형자산
+      description: 설비투자 생산성
+      value_type: ratio
+    총자산증가율:
+      formula: null
+      sources:
+      - 총자산증가율
+      description: 성장성 추이
+      value_type: ratio
+    매출액증가율:
+      formula: null
+      sources:
+      - 매출액증가율
+      description: 성장 추세
+      value_type: ratio
+exp_pc:
+  name: 수출 및 수익성 변동
+  metrics:
+    매출총이익률:
+      formula: 매출총이익 / 매출액 * 100
+      sources:
+      - 매출총이익
+      - 매출액
+      description: 상품 마진율
+      value_type: ratio
+    영업이익률:
+      formula: 영업이익 / 매출액 * 100
+      sources:
+      - 영업이익
+      - 매출액
+      description: 영업활동 효율성
+      value_type: ratio
+    순이익률:
+      formula: 당기순이익 / 매출액 * 100
+      sources:
+      - 당기순이익
+      - 매출액
+      description: 최종 수익성
+      value_type: ratio
+    매출원가율:
+      formula: 매출원가 / 매출액 * 100
+      sources:
+      - 매출원가
+      - 매출액
+      description: 원가 구조 파악
+      value_type: ratio
+    판매비와관리비:
+      formula: null
+      sources:
+      - 판매비와관리비
+      description: 기업이 해당 기간동안 소비한 판매 및 관리를 위한 비용으로 이익 감소의 요인
+      value_type: amount
+    판매비와관리비율:
+      formula: 판매비와관리비 / 매출액 * 100
+      sources:
+      - 판매비와관리비
+      - 매출액
+      description: 비용통제력 판단
+      value_type: ratio
+    매출채권/매출액 비율:
+      formula: 매출채권 / 매출액 * 100
+      sources:
+      - 매출채권
+      - 매출액
+      description: 외상매출 의존도
+      value_type: ratio
+    매출액증가율:
+      formula: null
+      sources:
+      - 매출액증가율
+      description: 성장률 비교로 효율성 판단
+      value_type: ratio
+    총자산증가율:
+      formula: null
+      sources:
+      - 총자산증가율
+      description: 성장률 비교로 효율성 판단
+      value_type: ratio
+cls:
+  name: 현금 유동성 확보 현황
+  metrics:
+    영업활동현금흐름:
+      formula: null
+      sources:
+      - 영업활동현금흐름
+      description: 본업 현금창출력
+      value_type: amount
+    총현금예금:
+      formula: null
+      sources:
+      - 총현금예금
+      description: 단기 지급능력 및 유동성 수준을 판단
+      value_type: amount
+    운전자본:
+      formula: 유동자산 - 유동부채
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기운영 여력
+      value_type: amount
+    순운전자본비율:
+      formula: 운전자본 / 매출액 * 100
+      sources:
+      - 운전자본
+      - 매출액
+      description: 영업규모 대비 운전자본 여유
+      value_type: ratio
+    매출채권회전기간(일):
+      formula: null
+      sources:
+      - 매출채권회전기간(일)
+      description: 외상회수 속도
+      value_type: days
+    재고자산회전기간(일):
+      formula: null
+      sources:
+      - 재고자산회전기간(일)
+      description: 재고 처리 효율
+      value_type: days
+    매입채무회전기간(일):
+      formula: null
+      sources:
+      - 매입채무회전기간(일)
+      description: 외상지급 유예기간
+      value_type: days
+    외부자금조달전 현금흐름:
+      formula: null
+      sources:
+      - 외부자금조달전 현금흐름
+      description: 내생적 현금창출력
+      value_type: amount
+    FCF (자유현금흐름):
+      formula: 영업활동현금흐름 - 투자활동현금흐름
+      sources:
+      - 영업활동현금흐름
+      - 투자활동현금흐름
+      description: 투자 후 잉여 현금
+      value_type: amount
+cs_dra:
+  name: 종합 건전성 및 부도 위험 분석
+  metrics:
+    Altman Z-Score:
+      formula: 1.2 * (운전자본/자산총계) + 1.4 * (잉여금등/자산총계) + 3.3 * (EBIT/자산총계) + 0.6 * (자본총계/부채총계)
+        + 1.0 * (매출액/자산총계)
+      sources:
+      - 운전자본
+      - 잉여금등
+      - EBIT
+      - 자본총계
+      - 부채총계
+      - 매출액
+      - 자산총계
+      description: '부도 가능성 예측 (1.8 이하: 부도가능성 높음, 3.0 이상: 건전)'
+      value_type: multiple
+    DSBI:
+      formula: (이자비용 + 원리금상환액) / 영업활동현금흐름
+      sources:
+      - 이자비용
+      - 원리금상환액
+      - 영업활동현금흐름
+      description: 부채상환 부담 수준
+      value_type: multiple
+    EBITDA 성장률:
+      formula: null
+      sources:
+      - EBITDA_성장률
+      description: 영업기반 현금이익의 성장 추세
+      value_type: ratio
+
+on_demand:
+  name: 온디맨드(요청 시 계산)
+  metrics:
+    Tangible Net Worth:
+      formula: 자산총계 - 무형자산
+      sources:
+      - 자산총계
+      - 무형자산
+      description: 유형자산 가치 파악
+      value_type: amount
+    B/S Gearing:
+      formula: 총차입금 / Tangible Net Worth * 100
+      sources:
+      - 총차입금
+      - Tangible Net Worth
+      description: 레버리지 수준 (차입금 대비 자본 여력)
+      value_type: ratio
+    고정장기적합율:
+      formula: 비유동자산 / (비유동부채 + 자본총계) * 100
+      sources:
+      - 비유동자산
+      - 비유동부채
+      - 자본총계
+      description: 고정자산이 장기자금으로 충당되는 비율로, 100% 미만이면 안정적 구조로 판단
+      value_type: ratio
+    Interest Cover:
+      formula: EBITDA / 이자비용
+      sources:
+      - EBITDA
+      - 이자비용
+      description: 현금기반 이자상환 여력
+      value_type: multiple
+    현금영업이익:
+      formula: null
+      sources:
+      - 현금영업이익
+      description: 영업활동 기반 현금수익
+      value_type: amount
+    순자금조달비용 지급후 현금흐름:
+      formula: null
+      sources:
+      - 순자금조달비용 지급후 현금흐름
+      description: 실제 차입금 상환 후 남는 현금
+      value_type: amount
+    투자활동현금흐름:
+      formula: null
+      sources:
+      - 투자활동현금흐름
+      description: 투자 규모 및 방향성
+      value_type: amount
+    ROA:
+      formula: 당기순이익 / 자산총계 * 100
+      sources:
+      - 당기순이익
+      - 자산총계
+      description: 자산 전체의 수익성
+      value_type: ratio
+    ROE:
+      formula: 당기순이익 / 자본총계 * 100
+      sources:
+      - 당기순이익
+      - 자본총계
+      description: 자기자본 수익성
+      value_type: ratio
+    EBITDA Margin:
+      formula: EBITDA / 매출액 * 100
+      sources:
+      - EBITDA
+      - 매출액
+      description: 현금기반 수익성
+      value_type: ratio
+    기말현금과 현금등가물:
+      formula: null
+      sources:
+      - 기말현금과 현금등가물
+      description: 보유 현금 수준
+      value_type: amount
+    현금비율:
+      formula: 총현금예금 / 유동부채 * 100
+      sources:
+      - 총현금예금
+      - 유동부채
+      description: 즉시 현금화 가능한 자산으로 단기 부채를 감당할 수 있는 능력 지표로, 20% 이상이면 단기 유동성 양호로 평가
+      value_type: ratio
+    CCC (현금전환주기):
+      formula: 매출채권회전기간(일) + 재고자산회전기간(일) - 매입채무회전기간(일)
+      sources:
+      - 매출채권회전기간(일)
+      - 재고자산회전기간(일)
+      - 매입채무회전기간(일)
+      description: 영업현금 순환속도
+      value_type: days
+    매출액경상이익율:
+      formula: null
+      sources:
+      - 매출액경상이익율
+      description: 영업+재무활동 성과
+      value_type: ratio
+
+# test A
+financial_risk:
+  name: 재무구조 + 유동성
+  metrics:
+    부채비율:
+      formula: 부채총계 / 자본총계 × 100
+      sources:
+      - 부채총계
+      - 자본총계
+      description: 자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음
+    자기자본비율:
+      formula: 자본총계 / 자산총계 × 100
+      sources:
+      - 자본총계
+      - 자산총계
+      description: 자본구조 안정성
+    차입금의존도:
+      formula: 총차입금 / 자산총계 * 100
+      sources:
+      - 총차입금
+      - 자산총계
+      description: 전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호
+    Net Debt:
+      formula: 총차입금 - 총현금예금
+      sources:
+      - 총차입금
+      - 총현금예금
+      description: 순금융부채 규모
+    순차입금비율:
+      formula: Net Debt / 자본총계 * 100
+      sources:
+      - Net Debt
+      - 자본총계
+      description: 순부채가 자기자본에 미치는 부담 수준을 나타내며, 20% 이하이면 안정적
+    유동비율:
+      formula: 유동자산 / 유동부채 * 100
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단
+    부채총계:
+      formula: 유동부채 + 비유동부채
+      sources:
+      - 유동부채
+      - 비유동부채
+      description: 부채 총액
+    자본총계:
+      formula: 자산총계 - 부채총계
+      sources:
+      - 자산총계
+      - 부채총계
+      description: 자본 총액
+
+debt_repayment:
+  name: 상환능력 + 현금흐름
+  metrics:
+    이자보상배율:
+      formula: 영업이익 / 이자비용
+      sources:
+      - 영업이익
+      - 이자비용
+      description: 영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적
+    DSCR:
+      formula: (영업활동현금흐름 + 이자비용) / (이자비용 + 원리금상환액)
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      - 원리금상환액
+      description: 현금창출로 부채상환 가능성
+    Cash Flow to Debt:
+      formula: 영업활동현금흐름 / 부채총계
+      sources:
+      - 영업활동현금흐름
+      - 부채총계
+      description: 부채 대비 현금창출 비율
+    차입금/EBITDA:
+      formula: 총차입금 / EBITDA
+      sources:
+      - 총차입금
+      - EBITDA
+      description: 차입금 상환 기간 추정
+    금융비용부담율:
+      formula: 이자비용 / 매출액 * 100
+      sources:
+      - 이자비용
+      - 매출액
+      description: 매출 대비 이자비용 부담
+    영업활동현금흐름:
+      formula: null
+      sources:
+      - 영업활동현금흐름
+      description: 본업 현금창출력
+    EBITDA:
+      formula: null
+      sources:
+      - EBITDA
+      description: ''
+
+business_performance:
+  name: 수익성 + 성장
+  metrics:
+    매출총이익률:
+      formula: 매출총이익 / 매출액 * 100
+      sources:
+      - 매출총이익
+      - 매출액
+      description: 상품 마진율
+    영업이익률:
+      formula: 영업이익 / 매출액 * 100
+      sources:
+      - 영업이익
+      - 매출액
+      description: 영업활동 효율성
+    순이익률:
+      formula: 당기순이익 / 매출액 * 100
+      sources:
+      - 당기순이익
+      - 매출액
+      description: 최종 수익성
+    매출원가율:
+      formula: 매출원가 / 매출액 * 100
+      sources:
+      - 매출원가
+      - 매출액
+      description: 원가 구조 파악
+    매출채권/매출액 비율:
+      formula: 매출채권 / 매출액 * 100
+      sources:
+      - 매출채권
+      - 매출액
+      description: 외상매출 의존도
+    매출액증가율:
+      formula: null
+      sources:
+      - 매출액증가율
+      description: 성장률 비교로 효율성 판단
+    총자산증가율:
+      formula: null
+      sources:
+      - 총자산증가율
+      description: 성장률 비교로 효율성 판단
+    매출채권회전기간(일):
+      formula: null
+      sources:
+      - 매출채권회전기간(일)
+      description: 외상회수 속도
+    EBIT:
+      formula: 영업이익 + 영업외수익 - 영업외비용
+      sources:
+      - 영업이익
+      - 영업외수익
+      - 영업외비용
+      description: ''
+
+# test B
+risk:
+  name: 안정성 + 상환능력
+  metrics:
+    부채비율:
+      formula: 부채총계 / 자본총계 × 100
+      sources:
+      - 부채총계
+      - 자본총계
+      description: 자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음
+    자기자본비율:
+      formula: 자본총계 / 자산총계 × 100
+      sources:
+      - 자본총계
+      - 자산총계
+      description: 자본구조 안정성
+    차입금의존도:
+      formula: 총차입금 / 자산총계 * 100
+      sources:
+      - 총차입금
+      - 자산총계
+      description: 전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호
+    순차입금비율:
+      formula: Net Debt / 자본총계 * 100
+      sources:
+      - Net Debt
+      - 자본총계
+      description: 순부채가 자기자본에 미치는 부담 수준을 나타내며, 20% 이하이면 안정적
+    유동부채비중:
+      formula: 유동부채 / 부채총계 * 100
+      sources:
+      - 유동부채
+      - 부채총계
+      description: 단기부채 집중도
+    차입금 비중:
+      formula: 총차입금 / 부채총계 * 100
+      sources:
+      - 총차입금
+      - 부채총계
+      description: 부채 중 금융성 부채 비율
+    Net Debt:
+      formula: 총차입금 - 총현금예금
+      sources:
+      - 총차입금
+      - 총현금예금
+      description: 순금융부채 규모
+    유동비율:
+      formula: 유동자산 / 유동부채 * 100
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단
+    운전자본:
+      formula: 유동자산 - 유동부채
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기운영 여력
+    순운전자본비율:
+      formula: 운전자본 / 매출액 * 100
+      sources:
+      - 운전자본
+      - 매출액
+      description: 영업규모 대비 운전자본 여유
+    FCF (자유현금흐름):
+      formula: 영업활동현금흐름 + 투자활동현금흐름
+      sources:
+      - 영업활동현금흐름
+      - 투자활동현금흐름
+      description: 투자 후 잉여 현금
+    이자보상배율:
+      formula: 영업이익 / 이자비용
+      sources:
+      - 영업이익
+      - 이자비용
+      description: 영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적
+    DSCR:
+      formula: (영업활동현금흐름 + 이자비용) / (이자비용 + 원리금상환액)
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      - 원리금상환액
+      description: 현금창출로 부채상환 가능성
+    Cash Flow to Debt:
+      formula: 영업활동현금흐름 / 부채총계
+      sources:
+      - 영업활동현금흐름
+      - 부채총계
+      description: 부채 대비 현금창출 비율
+    차입금/EBITDA:
+      formula: 총차입금 / EBITDA
+      sources:
+      - 총차입금
+      - EBITDA
+      description: 차입금 상환 기간 추정
+    금융비용부담율:
+      formula: 이자비용 / 매출액 * 100
+      sources:
+      - 이자비용
+      - 매출액
+      description: 매출 대비 이자비용 부담
+    현금이자보상배율:
+      formula: 영업활동현금흐름 / 이자비용
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      description: 실제 현금기반 상환여력
+    영업이익 대비 현금창출율:
+      formula: 영업활동현금흐름 / 영업이익 * 100
+      sources:
+      - 영업활동현금흐름
+      - 영업이익
+      description: 회계상 영업이익의 현금화 정도
+
+performance:
+  name: 수익성 + 성장
+  metrics:
+    총자산회전율:
+      formula: 매출액 / 자산총계
+      sources:
+      - 매출액
+      - 자산총계
+      description: 자산활용 효율
+    고정자산회전율:
+      formula: 매출액 / 유형자산
+      sources:
+      - 매출액
+      - 유형자산
+      description: 설비투자 생산성
+    총자산증가율:
+      formula: null
+      sources:
+      - 총자산증가율
+      description: 성장성 추이
+    매출액증가율:
+      formula: null
+      sources:
+      - 매출액증가율
+      description: 성장 추세
+    매출총이익률:
+      formula: 매출총이익 / 매출액 * 100
+      sources:
+      - 매출총이익
+      - 매출액
+      description: 상품 마진율
+    영업이익률:
+      formula: 영업이익 / 매출액 * 100
+      sources:
+      - 영업이익
+      - 매출액
+      description: 영업활동 효율성
+    순이익률:
+      formula: 당기순이익 / 매출액 * 100
+      sources:
+      - 당기순이익
+      - 매출액
+      description: 최종 수익성
+    매출원가율:
+      formula: 매출원가 / 매출액 * 100
+      sources:
+      - 매출원가
+      - 매출액
+      description: 원가 구조 파악
+    유형자산비율:
+      formula: 유형자산 / 자산총계 * 100
+      sources:
+      - 유형자산
+      - 자산총계
+      description: 자산 구조의 고정성 판단
+    매출채권/매출액 비율:
+      formula: 매출채권 / 매출액 * 100
+      sources:
+      - 매출채권
+      - 매출액
+      description: 외상매출 의존도
+
+# test C
+overall:
+  name: 전체
+  metrics:
+    부채총계:
+      formula: 유동부채 + 비유동부채
+      sources:
+      - 유동부채
+      - 비유동부채
+      description: 부채 총액
+    자본총계:
+      formula: 자산총계 - 부채총계
+      sources:
+      - 자산총계
+      - 부채총계
+      description: 자본 총액
+    EBIT:
+      formula: 영업이익 + 영업외수익 - 영업외비용
+      sources:
+      - 영업이익
+      - 영업외수익
+      - 영업외비용
+      description: ''
+    조정형EBIT:
+      formula: 영업이익 + (영업외수익 - 이자수익) - (영업외비용 - 이자비용)
+      sources:
+      - 영업이익
+      - 영업외수익
+      - 이자수익
+      - 영업외비용
+      - 이자비용
+      description: 순수 영업기반 수익성
+    원리금상환액:
+      formula: (영업활동현금흐름 + 이자비용) / DSCR
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      - DSCR
+      description: ''
+    부채비율:
+      formula: 부채총계 / 자본총계 × 100
+      sources:
+      - 부채총계
+      - 자본총계
+      description: 자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음
+    자기자본비율:
+      formula: 자본총계 / 자산총계 × 100
+      sources:
+      - 자본총계
+      - 자산총계
+      description: 자본구조 안정성
+    차입금의존도:
+      formula: 총차입금 / 자산총계 * 100
+      sources:
+      - 총차입금
+      - 자산총계
+      description: 전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호
+    총차입금:
+      formula: null
+      sources:
+      - 총차입금
+      description: 전체 금융부채 규모
+    Net Debt:
+      formula: 총차입금 - 총현금예금
+      sources:
+      - 총차입금
+      - 총현금예금
+      description: 순금융부채 규모
+    순차입금비율:
+      formula: Net Debt / 자본총계 * 100
+      sources:
+      - Net Debt
+      - 자본총계
+      description: 순부채가 자기자본에 미치는 부담 수준을 나타내며, 20% 이하이면 안정적
+    유동부채비중:
+      formula: 유동부채 / 부채총계 * 100
+      sources:
+      - 유동부채
+      - 부채총계
+      description: 단기부채 집중도
+    차입금 비중:
+      formula: 총차입금 / 부채총계 * 100
+      sources:
+      - 총차입금
+      - 부채총계
+      description: 부채 중 금융성 부채 비율
+    유형자산비율:
+      formula: 유형자산 / 자산총계 * 100
+      sources:
+      - 유형자산
+      - 자산총계
+      description: 자산 구조의 고정성 판단
+    유동비율:
+      formula: 유동자산 / 유동부채 * 100
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단
+    이자보상배율:
+      formula: 영업이익 / 이자비용
+      sources:
+      - 영업이익
+      - 이자비용
+      description: 영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적
+    DSCR:
+      formula: (영업활동현금흐름 + 이자비용) / (이자비용 + 원리금상환액)
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      - 원리금상환액
+      description: 현금창출로 부채상환 가능성
+    Cash Flow to Debt:
+      formula: 영업활동현금흐름 / 부채총계
+      sources:
+      - 영업활동현금흐름
+      - 부채총계
+      description: 부채 대비 현금창출 비율
+    차입금/EBITDA:
+      formula: 총차입금 / EBITDA
+      sources:
+      - 총차입금
+      - EBITDA
+      description: 차입금 상환 기간 추정
+    금융비용부담율:
+      formula: 이자비용 / 매출액 * 100
+      sources:
+      - 이자비용
+      - 매출액
+      description: 매출 대비 이자비용 부담
+    현금이자보상배율:
+      formula: 영업활동현금흐름 / 이자비용
+      sources:
+      - 영업활동현금흐름
+      - 이자비용
+      description: 실제 현금기반 상환여력
+    영업이익 대비 현금창출율:
+      formula: 영업활동현금흐름 / 영업이익 * 100
+      sources:
+      - 영업활동현금흐름
+      - 영업이익
+      description: 회계상 영업이익의 현금화 정도
+    비유동자산:
+      formula: null
+      sources:
+      - 비유동자산
+      description: 투자 구조의 성격
+    유형자산:
+      formula: null
+      sources:
+      - 유형자산
+      description: 투자 구조의 성격
+    총자산회전율:
+      formula: 매출액 / 자산총계
+      sources:
+      - 매출액
+      - 자산총계
+      description: 자산활용 효율
+    고정자산회전율:
+      formula: 매출액 / 유형자산
+      sources:
+      - 매출액
+      - 유형자산
+      description: 설비투자 생산성
+    총자산증가율:
+      formula: null
+      sources:
+      - 총자산증가율
+      description: 성장성 추이
+    매출액증가율:
+      formula: null
+      sources:
+      - 매출액증가율
+      description: 성장 추세
+    매출총이익률:
+      formula: 매출총이익 / 매출액 * 100
+      sources:
+      - 매출총이익
+      - 매출액
+      description: 상품 마진율
+    영업이익률:
+      formula: 영업이익 / 매출액 * 100
+      sources:
+      - 영업이익
+      - 매출액
+      description: 영업활동 효율성
+    순이익률:
+      formula: 당기순이익 / 매출액 * 100
+      sources:
+      - 당기순이익
+      - 매출액
+      description: 최종 수익성
+    매출원가율:
+      formula: 매출원가 / 매출액 * 100
+      sources:
+      - 매출원가
+      - 매출액
+      description: 원가 구조 파악
+    판매비와관리비:
+      formula: null
+      sources:
+      - 판매비와관리비
+      description: 기업이 해당 기간동안 소비한 판매 및 관리를 위한 비용으로 이익 감소의 요인
+    판매비와관리비율:
+      formula: 판매비와관리비 / 매출액 * 100
+      sources:
+      - 판매비와관리비
+      - 매출액
+      description: 비용통제력 판단
+    매출채권/매출액 비율:
+      formula: 매출채권 / 매출액 * 100
+      sources:
+      - 매출채권
+      - 매출액
+      description: 외상매출 의존도
+    매출액증가율:
+      formula: null
+      sources:
+      - 매출액증가율
+      description: 성장률 비교로 효율성 판단
+    총자산증가율:
+      formula: null
+      sources:
+      - 총자산증가율
+      description: 성장률 비교로 효율성 판단
+    영업활동현금흐름:
+      formula: null
+      sources:
+      - 영업활동현금흐름
+      description: 본업 현금창출력
+    총현금예금:
+      formula: null
+      sources:
+      - 총현금예금
+      description: 단기 지급능력 및 유동성 수준을 판단
+    운전자본:
+      formula: 유동자산 - 유동부채
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기운영 여력
+    순운전자본비율:
+      formula: 운전자본 / 매출액 * 100
+      sources:
+      - 운전자본
+      - 매출액
+      description: 영업규모 대비 운전자본 여유
+    매출채권회전기간(일):
+      formula: null
+      sources:
+      - 매출채권회전기간(일)
+      description: 외상회수 속도
+    재고자산회전기간(일):
+      formula: null
+      sources:
+      - 재고자산회전기간(일)
+      description: 재고 처리 효율
+    매입채무회전기간(일):
+      formula: null
+      sources:
+      - 매입채무회전기간(일)
+      description: 외상지급 유예기간
+    외부자금조달전 현금흐름:
+      formula: null
+      sources:
+      - 외부자금조달전 현금흐름
+      description: 내생적 현금창출력
+    FCF (자유현금흐름):
+      formula: 영업활동현금흐름 + 투자활동현금흐름
+      sources:
+      - 영업활동현금흐름
+      - 투자활동현금흐름
+      description: 투자 후 잉여 현금
+
+
+# test D (재무용어 일부 추가)
+risk_D:
+  name: 재무구조 + 상환능력 + 현금흐름
+  metrics:
+    부채비율:
+      formula: 부채총계 / 자본총계 × 100
+      sources:
+      - 부채총계
+      - 자본총계
+      description: 자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음
+    자기자본비율:
+      formula: 자본총계 / 자산총계 × 100
+      sources:
+      - 자본총계
+      - 자산총계
+      description: 재무구조의 안정성을 나타내며, 높을수록 외부충격에 대한 완충능력이 우수함
+    차입금의존도:
+      formula: 총차입금 / 자산총계 * 100
+      sources:
+      - 총차입금
+      - 자산총계
+      description: 전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호
+    총차입금:
+      formula: null
+      sources:
+      - 총차입금
+      description: 총차입금 증가는 이자비용·차입금의존도·부채비율 상승으로 이어질 수 있으며, 수익창출력이 충분히 뒷받침되지 않으면 이자보상배율 하락을 통해 차입부담 확대가 나타날 수 있다.
+    유동비율:
+      formula: 유동자산 / 유동부채 * 100
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단
+    운전자본:
+      formula: 유동자산 - 유동부채
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 매출채권·재고자산 증가가 운전자본을 키우지만, 이는 곧 현금유출일 수 있다. 운전자본과 유동비율이 함께 높으면 단기 재무안정성은 양호해 보일 수 있으나, 영업활동현금흐름이 이를 뒷받침하지 못하면 자금이 비효율적으로 묶여 있을 가능성도 있다.
+    이자보상배율:
+      formula: 영업이익 / 이자비용
+      sources:
+      - 영업이익
+      - 이자비용
+      description: 영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적
+    EBITDA:
+      formula: null
+      sources:
+      - EBITDA
+      description: EBITDA가 증가하더라도 총차입금과 이자비용이 더 빠르게 늘면 이자보상배율 개선이 제한될 수 있어, 상환여력 평가는 수익창출력과 부채부담을 함께 봐야 한다.
+    영업활동현금흐름:
+      formula: null
+      sources:
+      - 영업활동현금흐름
+      description: 매출채권·재고자산 증가로 운전자본이 확대되면 영업현금이 약해질 수 있고, 당기순이익과 비교하면 이익의 질, 기말현금과 비교하면 유동성 지속성을 판단할 수 있다.
+    투자활동현금흐름:
+      formula: null
+      sources:
+      - 투자활동현금흐름
+      description: 투자활동현금흐름의 유출 확대가 비유동자산, 특히 투자자산이나 유형자산 증가와 함께 나타난다면 미래 성장 또는 운영기반 확충을 위한 자금집행으로 해석할 수 있다.
+    재무활동현금흐름:
+      formula: null
+      sources:
+      - 재무활동현금흐름
+      description: 재무활동현금흐름 유입이 커지는 시기에 총차입금이나 자본금잉여금등이 함께 증가한다면, 외부 차입이나 자본조달을 통해 자금을 확보하고 있는 구조로 볼 수 있다.
+    기말현금과현금등가물:
+      formula: null
+      sources:
+      - 기말현금과현금등가물
+      description: 유동자산이 증가하더라도 기말현금과현금등가물 비중이 낮다면 실질 유동성은 기대보다 약할 수 있으므로, 현금성자산 비중이 높을수록 유동자산의 질이 우수하다고 해석할 수 있다.
+
+performance_D:
+  name: 수익성 + 성장 + 운영 효율
+  metrics:
+    매출액:
+      formula: null
+      sources:
+      - 매출액
+      description: 매출액이 증가하더라도 매출원가율이나 판관비 부담이 함께 높아지면 영업이익과 매출액영업이익율은 오히려 하락할 수 있어, 외형 성장만으로 수익성 개선을 판단하기는 어렵다.
+    매출총이익:
+      formula: null
+      sources:
+      - 매출총이익
+      description: 매출총이익이 감소하면서 매출원가율이 상승한다면 판매단가보다 원가 증가 압력이 더 크다는 의미일 수 있어, 본업의 채산성이 나빠지는 신호로 해석할 수 있다.
+    영업이익:
+      formula: null
+      sources:
+      - 영업이익
+      description: 영업이익은 양호하지만 EBITDA와의 차이가 크면 감가상각비 등 비현금성비용 영향이 크다는 뜻일 수 있고, 당기순이익이 더 약하다면 금융비용이나 비영업손실 부담이 크다고 해석할 수 있다.
+    당기순이익:
+      formula: null
+      sources:
+      - 당기순이익
+      description: 영업이익 대비 당기순이익이 약할수록 이자비용 등 금융손익 부담이 크게 작용한 것으로 볼 수 있고, 이자수익이 증가하면 그 부담을 일부 완화하는 요인으로 해석할 수 있다.
+    매출액영업이익율:
+      formula: null
+      sources:
+      - 매출액영업이익율
+      description: 매출액영업이익율이 하락할 때 매출원가율 상승과 판관비 증가가 함께 나타난다면, 이는 원가와 비용 부담이 동시에 확대되어 운영효율이 전반적으로 저하되고 있음을 시사한다.
+    매출원가율:
+      formula: 매출원가 / 매출액 * 100
+      sources:
+      - 매출원가
+      - 매출액
+      description: 매출원가율이 상승하면 같은 매출액 기준에서 매출총이익은 감소하는 방향으로 움직이므로, 원가통제 수준이 약화될수록 본업의 1차 수익창출력도 함께 저하될 가능성이 높다.
+    판매비와관리비:
+      formula: null
+      sources:
+      - 판매비와관리비
+      description: 매출이 성장해도 판관비가 빠르게 늘면 영업이익률이 하락하고, EBITDA와 함께 보면 비현금성비용을 제외하더라도 운영비 부담이 큰지 확인할 수 있다.
+    매출채권:
+      formula: null
+      sources:
+      - 매출채권
+      description: 매출채권은 유동자산과 운전자본을 증가시키는 요인이지만, 매출채권 회수기간이 장기화되고 영업활동현금흐름이 부진한 경우에는 장부상 유동성 개선과 달리 실질 유동성은 약화된 것으로 해석할 수 있다.
+    재고자산:
+      formula: null
+      sources:
+      - 재고자산
+      description: 재고자산이 증가할 때 매출원가율이 함께 상승하고 매출총이익 및 영업활동현금흐름이 악화된다면, 재고 부담이 수익성과 현금회수에 동시에 부정적 영향을 주고 있을 가능성이 높다.
+    이자수익:
+      formula: null
+      sources:
+      - 이자수익
+      description: 이자수익이 증가해 당기순이익 개선에 기여하더라도 이는 영업성과와는 구분해야 하며, 본업 수익성이 약한 상황이라면 순이익 개선을 구조적 회복으로 보기는 어렵다.
+    이자비용:
+      formula: null
+      sources:
+      - 이자비용
+      description: 이자비용은 총차입금에서 발생하는 직접적인 금융부담이므로, 총차입금이 증가할 때 이자비용도 함께 늘어나면 차입부담이 확대되고 있는 것으로 해석할 수 있다.
+
+# test E (차장님 선정 지표)
+risk_E:
+  name: 안정성 및 상환능력
+  interpret_guidance: |
+    - 표에 있는 활성 지표만 사용하고, 표에 없는 지표·영역은 생략한다.
+    - 부채비율은 본문에서 직접 언급하지 말고 자기자본비율·차입금의존도·총차입금 중심으로 서술한다.
+    - 재무안정성/단기지급능력/상환능력 및 재무부담/현금창출력/수익성 변화 관점으로 영역 단위 서술을 구성한다.
+    - 해석은 가능한 범위에서 전년 대비 -> 업종평균 -> 지표 간 관계 순서를 따른다.
+    - 표 수치·변화만 근거로 사용하고, 회계 사건·일회성 비용 등 구체 원인 추정은 금지한다.
+  interpretation_groups:
+  - group_id: risk_e_stability
+    activation_metrics:
+    - 총차입금
+    - 차입금의존도
+    include_metrics:
+    - 이자비용
+    - 부채비율
+    - 이자보상배율율
+    guidance_text: 총차입금 증가는 이자비용·차입금의존도·부채비율 상승으로 이어질 수 있으며, 수익창출력이 충분히 뒷받침되지 않으면 이자보상배율 하락을 통해 차입부담 확대가 나타날 수 있다.
+    enabled: true
+  - group_id: risk_e_debt_service
+    activation_metrics:
+    - EBITDA
+    - 이자보상배율
+    include_metrics:
+    - 영업활동현금흐름
+    - 차입금/EBITDA
+    guidance_text: EBITDA가 증가하더라도 총차입금과 이자비용이 더 빠르게 늘면 이자보상배율 개선이 제한될 수 있어, 상환여력 평가는 수익창출력과 부채부담을 함께 봐야 한다. 수익창출력 관점은 영업활동현금흐름과 EBITDA를 함께 비교한다.
+    enabled: true
+  - group_id: risk_e_profitability
+    activation_metrics:
+    - 매출원가율
+    - 영업이익
+    - 당기순이익
+    - 매출액영업이익율
+    include_metrics:
+    guidance_text: 수익성 변화 관점에서 매출원가율 -> 영업이익 -> 당기순이익 흐름으로 연결하고, 변동이 큰 지표를 우선 설명한다.
+    enabled: true
+  - group_id: risk_e_factoring
+    activation_metrics:
+    - 매출채권
+    - 재고자산
+    include_metrics:
+    - 영업활동현금흐름
+    - 당기순이익
+    - 매출채권양도액등
+    guidance_text: 매출채권·재고자산 증가로 운전자본이 확대되면 영업현금이 약해질 수 있고, 당기순이익과 비교하면 이익의 질, 기말현금과 비교하면 유동성 지속성을 판단할 수 있다.
+    enabled: true
+  - group_id: risk_e_ebitda_gap
+    activation_metrics:
+    - 영업이익
+    - EBITDA
+    - 당기순이익
+    include_metrics:
+    - 이자비용
+    guidance_text: 영업이익은 양호하지만 EBITDA와의 차이가 크면 감가상각비 등 비현금성비용 영향이 크다는 뜻일 수 있고, 당기순이익이 더 약하다면 금융비용이나 비영업손실 부담이 크다고 해석할 수 있다.
+    enabled: true
+  - group_id: risk_e_financial_burden
+    activation_metrics:
+    - 영업이익
+    - 당기순이익
+    include_metrics:
+    - 이자비용
+    - 이자수익
+    guidance_text: 영업이익 대비 당기순이익이 약할수록 이자비용 등 금융손익 부담이 크게 작용한 것으로 볼 수 있고, 이자수익이 증가하면 그 부담을 일부 완화하는 요인으로 해석할 수 있다.
+    enabled: true
+  - group_id: risk_e_cogs_gross_profit
+    activation_metrics:
+    - 매출원가율
+    include_metrics:
+    - 매출총이익
+    - 영업이익
+    guidance_text: 매출원가율이 상승하면 같은 매출액 기준에서 매출총이익은 감소하는 방향으로 움직이므로, 원가통제 수준이 약화될수록 본업의 1차 수익창출력도 함께 저하될 가능성이 높다.
+    enabled: true
+  - group_id: risk_e_margin_cost_pressure
+    activation_metrics:
+    - 매출액영업이익율
+    include_metrics:
+    - 매출원가율
+    - 판관비
+    guidance_text: 매출액영업이익율이 하락할 때 매출원가율 상승과 판관비 증가가 함께 나타난다면, 이는 원가와 비용 부담이 동시에 확대되어 운영효율이 전반적으로 저하되고 있음을 시사한다.
+    enabled: true
+  - group_id: risk_e_receivables_factoring_signal
+    activation_metrics:
+    - 매출채권양도액등
+    include_metrics:
+    - 매출채권
+    - 영업활동현금흐름
+    - 당기순이익
+    guidance_text: 기업이 외상매출채권을 담보대출·팩토링 등으로 현금화한 규모를 뜻하므로, 자금사정과 운전자금 의존도를 보여주는 지표로, 금액이 크고 반복되면 유동성 압박 신호로 해석할 수 있고, 반대로 업종 특성상 일시적으로 쓰는 수준이면 정상적인 자금조달 수단으로 설명한다.
+    enabled: true
+  metrics:
+    # 부채비율:
+    #   formula: 부채총계 / 자본총계 × 100
+    #   sources:
+    #   - 부채총계
+    #   - 자본총계
+    #   description: 자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음
+    자기자본비율:
+      formula: 자본총계 / 자산총계 × 100
+      sources:
+      - 자본총계
+      - 자산총계
+      description: 재무구조의 안정성을 나타내며, 높을수록 외부충격에 대한 완충능력이 우수함
+    차입금의존도:
+      formula: 총차입금 / 자산총계 * 100
+      sources:
+      - 총차입금
+      - 자산총계
+      description: 전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호
+    총차입금:
+      formula: null
+      sources:
+      - 총차입금
+      description: 전체 금융부채 규모
+    유동비율:
+      formula: 유동자산 / 유동부채 * 100
+      sources:
+      - 유동자산
+      - 유동부채
+      description: 단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단
+    이자보상배율:
+      formula: 영업이익 / 이자비용
+      sources:
+      - 영업이익
+      - 이자비용
+      description: 영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적
+    EBITDA:
+      formula: null
+      sources:
+      - EBITDA
+      description: 현금창출력 보조 지표
+    영업활동현금흐름:
+      formula: null
+      sources:
+      - 영업활동현금흐름
+      description: 본업 현금창출력
+    차입금/EBITDA:
+      formula: 총차입금 / EBITDA
+      sources:
+      - 총차입금
+      - EBITDA
+      description: 차입금 상환 기간 추정
+    영업이익:
+      formula: null
+      sources:
+      - 영업이익
+      description: 영업활동 손익 지표
+    당기순이익:
+      formula: null
+      sources:
+      - 당기순이익
+      description: 최종 수익성 지표
+    매출원가율:
+      formula: 매출원가 / 매출액 * 100
+      sources:
+      - 매출원가
+      - 매출액
+      description: 원가 구조 지표
+    매출액영업이익율:
+      formula: null
+      sources:
+      - 매출액영업이익율
+      description: 매출 대비 영업수익성 지표
+    매출채권양도액등:
+      formula: null
+      sources:
+      - 매출채권양도액등
+      description: 매출채권 유동화 규모 지표

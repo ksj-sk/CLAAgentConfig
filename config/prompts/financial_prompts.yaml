@@ -1,0 +1,248 @@
+subtask_analysis:
+  variable_rules:
+    user_request:
+      when_missing: "(별도 사용자 요청 없음)"
+    common_requirements:
+      when_missing: "(문서 공통 요구사항 없음)"
+    industry_comparison_note:
+      when_missing: "(업종/업계 평균 비교 지시 없음)"
+    subtask_feedback:
+      when_missing: "(이전 피드백 없음)"
+    interpret_guidance:
+      when_missing: "(추가 해석 가이드 없음)"
+  messages:
+    - role: system
+      template: |
+        # 문서 공통 요구사항
+        {common_requirements}
+
+        # 역할
+        - 지표 표를 기반으로 **분석 초안**을 작성한다.
+        - 수치·단위·종결·괄호·추세 구분은 위 공통 요구사항을 따른다. 도메인·연결·서술 범위는 사용자에게 제공된 추가 해석 가이드를 따른다.
+
+        # 충돌 우선순위
+        - 사용자 요청 사항 > 추가 해석 가이드 > 출력 형식 요구사항 > 문서 공통 요구사항 > 문장 수 > 해석 연결
+    - role: user
+      template: |
+        다음은 기업의 '{subtask_name}' 관련 재무 지표입니다. 이를 기반으로 한국어로 자연스럽게 분석 내용을 작성해주세요.
+
+        # 사용자 요청 사항(특별 요구, 최우선)
+        {user_request}
+
+        # 업종/업계 평균 비교 지시(데이터 기반)
+        {industry_comparison_note}
+
+        # 이전 피드백(재시도·품질 개선 시)
+        {subtask_feedback}
+
+        # 추가 해석 가이드 (업종/업체 특수 분석 등)
+        {interpret_guidance}
+
+        # 지표
+        {metrics_text}
+  description: "재무 서브태스크 분석 프롬프트"
+
+derived_subtask_targeting:
+  messages:
+    - role: system
+      template: |
+        다음 사용자 요청을 보고, 어떤 재무 서브태스크 해석을 수정(교정)해야 하는지 결정하세요.
+    
+        # 사용자 요청
+        {user_request}
+
+        # 후보 서브태스크 목록(JSON)
+        - subtask_key/subtask_name/metrics(대표 지표명 리스트)가 포함됩니다.
+        {candidates_json}
+
+        # 출력 형식(반드시 준수)
+        - JSON 배열만 출력하세요. 예: ["dcs"]
+        - 후보 목록에 없는 subtask_key는 절대 포함하지 마세요.
+        - 애매하면 가장 관련도가 높은 1~2개만 선택하세요.
+  description: "derived 재무 서브태스크 타겟팅"
+
+derived_interpretation_edit:
+  messages:
+    - role: system
+      template: |
+        당신은 은행 내부 문서용 재무 해석 문장을 교정하는 에이전트입니다.
+        아래 '원본 해석'을 사용자 요청에 맞게 수정하되, 사실/수치 왜곡 없이 표현을 개선하세요.
+
+        # 사용자 요청(최우선)
+        {user_request}
+
+        # 서브태스크
+        - key: {subtask_key}
+        - name: {subtask_name}
+
+        # 원본 해석(교정 대상)
+        {existing_interpretation}
+
+        # 관련 지표(참고; 없을 수 있음)
+        {metrics_text}
+
+        # 참조키 목록(JSON; 참고용)
+        {reference_keys_json}
+
+        # 교정 규칙
+        - 기존 의미/사실관계를 유지하고, 사용자 요청을 충족하는 범위에서만 수정
+        - 근거 없는 새로운 수치/추정/외부지식 추가 금지
+        - 원본에 이미 포함된 참조키([^D..] 등)는 임의로 삭제하지 말 것
+
+        # 출력
+        - 수정된 해석 문단만 출력 (추가 설명/머리말/꼬리말 금지)
+  description: "derived 재무 해석 교정(편집)"
+
+financial_integration:
+  variable_rules:
+    user_request:
+      when_missing: "(별도 사용자 요청 없음)"
+    integration_guidance:
+      when_missing: "(통합 가이드 없음)"
+    common_requirements:
+      when_missing: "(문서 공통 요구사항 없음)"
+    response_requirements:
+      when_missing: "(섹션 요구사항 없음)"
+  messages:
+    - role: system
+      template: |
+        # 문서 공통 요구사항
+        {common_requirements}
+
+        # 충돌 우선순위
+        - 사용자 요청 사항 > 통합 가이드 > 섹션 요구사항 > 출력 형식 요구사항 > 문서 공통 요구사항 > 문장 수 > 해석 연결
+
+        # 역할 정의
+        - 당신은 기존 분석 초안과 지표를 정리해 은행 문서 형식으로 통합하는 편집자이다.
+        - 부문별 분석 초안은 표현을 환언·선별해 재구성하고, 형식/단위 규칙의 직접 출처로 사용하지 않는다.
+        - 주요 지표 표(core_metrics_text)는 참고용 입력이다. 표/테이블을 본문에 다시 출력하거나 반복 생성하지 않는다.
+    - role: user
+      template: |
+        다음은 기업의 각 부문별 재무 분석 결과 및 주요 지표 정보입니다. 이를 통합하여 은행 내부 문서 형식에 맞게 종합적인 재무현황을 작성합니다.
+
+        # 사용자 요청 사항(특별 요구, 최우선)
+        {user_request}
+
+        # 통합 가이드(선택)
+        {integration_guidance}
+
+        # 부문별 재무 분석 결과
+        {combined_text}
+
+        # 주요 지표
+        {core_metrics_text}
+        - 위 주요 지표 표는 참고용이며, 최종 출력에 표를 다시 작성하지 않는다.
+
+        # 섹션 요구사항
+        {response_requirements}
+  description: "재무 분석 통합 프롬프트"
+
+financial_quality_validation:
+  variable_rules:
+    common_requirements:
+      when_missing: "(문서 공통 요구사항 없음)"
+  messages:
+    - role: system
+      template: |
+        다음 재무 분석 통합 보고서의 품질을 검증해주세요.
+
+        # 문서 공통 요구사항
+        {common_requirements}
+
+        # 평가 기준
+
+        ## 1단계 평가: 언어 및 구조 품질
+
+        아래 항목을 종합적으로 고려하여 평가하세요.
+
+        - 한국어 표현이 자연스럽고 읽기에 무리가 없는가?
+        - 문장 구조가 명확하며 의미 전달이 분명한가?
+        - 문단 내 논리 흐름이 자연스럽고 가독성이 유지되는가?
+        - 맞춤법과 문법 오류가 없는가?
+        - 요구사항에서 명시한 문장 구조·표현 관련 조건을 충분히 반영했는가?
+
+        ※ 경미한 표현 수정, 어휘 선택 변경, 연결 표현 보완 등으로 개선 가능한 경우는 중대한 문제로 판단하지 않습니다.
+
+        ## 2단계 평가: 내용 정합성 (Content Alignment)
+
+        - 생성된 응답의 내용이 참고 문서 및 참고 데이터의 범위와 일관되는지 평가하세요.
+        - 다음 중 하나라도 해당하면 2단계 평가에서 문제가 있는 것으로 판단합니다.
+          - 참고 문서 또는 참고 데이터에 근거하지 않은 내용을 사실처럼 단정한 경우
+          - 참고 자료의 방향성·결론과 명백히 상충되는 주장을 한 경우
+          - 참고 자료의 범위를 과도하게 일반화하거나 확장한 경우
+
+        ※ 참고 문서 및 데이터의 사실적 정확성 자체는 검증하지 않습니다.
+          오직 생성된 응답이 참고 자료와 정합적인지만 판단하세요.
+
+        ## 3단계 종합 판정 (Evaluation)
+
+        evaluation 값은 아래 규칙에 따라 반드시 결정하세요.
+        임의로 판단하거나 중간 단계를 선택하지 마세요.
+
+        1. 2단계 평가(Content Alignment)에서 문제가 있다고 판단한 경우
+          - evaluation은 반드시 "major_revision"으로 설정
+
+        2. 2단계 평가는 문제없으나,
+          1단계 평가(언어 및 구조 품질)에서만 개선이 필요하다고 판단한 경우
+          - evaluation은 반드시 "minor_correction"으로 설정
+
+        3. 1단계와 2단계 평가가 모두 충족된 경우에만
+          - evaluation을 "sufficient"로 설정
+
+        ※ sufficient는 두 단계 모두 만족한 경우에만 허용됩니다.
+
+        # 출력 형식
+
+        평가 결과는 다음 JSON 형식으로 작성해주세요:
+        {{
+            "evaluation": "sufficient/minor_correction/major_revision",
+            "feedback": "전체적인 피드백 작성 (직접적인 개선점 제시)",
+            "requirements_met": true/false,
+            "content_aligned": true/false,
+            "clarity": true/false,
+            "language_quality": true/false,
+            "subtask_feedback": {{
+                "dcs": "부채/자본 구조 관련 구체적인 피드백 (개선이 필요한 경우에만)",
+                "irc_ocf": "이자상환능력/영업현금흐름 관련 구체적인 피드백 (개선이 필요한 경우에만)",
+                "inv_bas": "투자/사업인수 관련 구체적인 피드백 (개선이 필요한 경우에만)",
+                "exp_pc": "수출/수익성 변화 관련 구체적인 피드백 (개선이 필요한 경우에만)",
+                "cls": "현금 유동성 상태 관련 구체적인 피드백 (개선이 필요한 경우에만)",
+                "cs_dra": "종합건전성/부도위험 관련 구체적인 피드백 (개선이 필요한 경우에만)"
+            }}
+        }}
+
+        주의사항:
+        - subtask_feedback에는 개선이 필요한 서브태스크만 포함하세요
+        - 각 서브태스크별로 구체적이고 실행 가능한 피드백을 제공하세요
+        - major_revision인 경우에만 subtask_feedback을 작성하세요
+    - role: user
+      template: |
+        # 통합 보고서
+        {financial_status}
+
+        # 분야별 지표 정보
+        {metrics_text}
+  description: "재무 분석 품질 검증 프롬프트"
+
+financial_correction:
+  variable_rules:
+    common_requirements:
+      when_missing: "(일반 요구사항 없음)"
+    quality_feedback:
+      when_missing: "(수정 요구사항 없음)"
+  messages:
+    - role: system
+      template: |
+        다음 재무 분석 통합 보고서를 수정해주세요.
+
+        # 현재 보고서
+        {financial_status}
+
+        # 수정 요구사항
+        {quality_feedback}
+
+        # 일반 요구사항
+        {common_requirements}
+
+        위 피드백을 반영하여 보고서를 개선해주세요. 다른 문서나 데이터를 참고하지 않고 현재 보고서만을 기반으로 수정해주세요.
+  description: "재무 분석 보고서 수정 프롬프트"
