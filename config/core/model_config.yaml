@@ -33,6 +33,10 @@ models:
     cla_responder: "google/gemma-4-26b-a4b-it"
     cla_conversation_summary: "google/gemma-4-26b-a4b-it"
 
+    # ParserAgent 전용 노드 타입
+    parser_industry_report: "google/gemma-4-31b-it"
+    table_title: "google/gemma-4-31b-it"
+
   # topic_key별 모델 오버라이드 (선택적)
   # - 사용 예시:
   topics:
@@ -133,6 +137,8 @@ parameters:
     #   temperature: 0.001
     # cla_conversation_summary:
     #   temperature: 0.3
+    parser_industry_report:
+      max_tokens: 8192
 
   # topic_key별 오버라이드 (선택적)
   # - 기본 구조:
