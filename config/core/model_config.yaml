@@ -1,6 +1,9 @@
 models:
   # 기본 설정 - 모든 노드 타입 정의
   default:
+    # 기본 모델 (model/node_type이 지정되지 않았거나 알 수 없는 node_type일 때 사용)
+    default_model: "google/gemma-4-26b-a4b-it"
+
     # 최종처리 모델 (처리 중 이슈 발생 시 사용)
     final: "google/gemma-4-31b-it"
 
@@ -22,6 +25,13 @@ models:
     # 종합 의견
     should_update_opinion: "google/gemma-4-26b-a4b-it"
     section_opinion: "google/gemma-4-31b-it"
+
+    # CLAAgentSystem(ChatAgent) 전용 노드 타입
+    cla_planner: "google/gemma-4-26b-a4b-it"
+    cla_planner_validate: "google/gemma-4-26b-a4b-it"
+    cla_planner_repair: "google/gemma-4-31b-it"
+    cla_responder: "google/gemma-4-26b-a4b-it"
+    cla_conversation_summary: "google/gemma-4-26b-a4b-it"
 
   # topic_key별 모델 오버라이드 (선택적)
   # - 사용 예시:
@@ -86,8 +96,8 @@ routers:
   # 기본 라우터 설정 (환경변수가 없을 때 사용)
   default:
     base_url: "http://192.15.80.54:28010"
-    router_mode: false  # 기본값은 false (기존 방식)
-    platform: "groq"  # router 모드일 때 플랫폼 지정 (openai, groq, vllm 중 선택)
+    router_mode: true  # 기본값은 false (기존 방식)
+    platform: "vllm"  # router 모드일 때 플랫폼 지정 (openai, groq, vllm 중 선택)
     include_model: true  # 라우터 모드일 때 모델명을 요청에 포함할지 여부 (기본값: false)
     endpoints:
       "google/gemma-4-26b-a4b-it": "/llm-light"
@@ -104,13 +114,26 @@ parameters:
     max_tokens: 4096
     top_p: 0.9
     # top_k: 50
-    # repetition_penalty: 1.1
   
   # 노드 타입별 오버라이드 (선택적)
   node_types:
     financial_interpret:
       max_tokens: 8192
-  
+    # CLAAgentSystem(ChatAgent) 전용 노드 타입
+    # cla_planner:
+    #   temperature: 0.001
+    cla_planner_validate:
+      temperature: 0.0
+      max_tokens: 2
+      stop: ["\n"]
+    cla_planner_repair:
+      temperature: 0.0
+      max_tokens: 512
+    # cla_responder:
+    #   temperature: 0.001
+    # cla_conversation_summary:
+    #   temperature: 0.3
+
   # topic_key별 오버라이드 (선택적)
   # - 기본 구조:
   # topics:
