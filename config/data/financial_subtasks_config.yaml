@@ -6,7 +6,7 @@ _defaults:
   unit_note: "금액=백만원, 비율/율/증가율=%, 배수=배, 기간=일"
   period_change_thresholds:
     ratio: 5.0
-    amount: 10.0
+    amount: 500.0
     multiple: 0.5
     days: 30.0
     default: 5.0
@@ -15,7 +15,7 @@ _defaults:
     combine: any
     conditions:
     - type: period_change_threshold
-      measure: auto
+      measure: absolute
     - type: sign_cross_zero
 
 base:
@@ -1287,7 +1287,9 @@ risk_E:
     - 표에 있는 활성 지표만 사용하고, 표에 없는 지표·영역은 생략한다.
     - 부채비율은 본문에서 직접 언급하지 말고 자기자본비율·차입금의존도·총차입금 중심으로 서술한다.
     - 재무안정성/단기지급능력/상환능력 및 재무부담/현금창출력/수익성 변화 관점으로 영역 단위 서술을 구성한다.
-    - 해석은 가능한 범위에서 전년 대비 -> 업종평균 -> 지표 간 관계 순서를 따른다.
+    - 변동폭이 큰 지표를 우선 설명하고, 변화가 제한적인 지표는 간략히 언급한다.
+    - 매출액영업이익율 등 비율 지표는 단독으로 설명하지 말고, 관련 손익 지표(영업이익·당기순이익 등)와 연결하여 설명한다.
+    - 해석은 가능한 범위에서 전년 대비 → 업종평균 → 지표 간 관계 순서를 따른다.
     - 표 수치·변화만 근거로 사용하고, 회계 사건·일회성 비용 등 구체 원인 추정은 금지한다.
   interpretation_groups:
   - group_id: risk_e_stability
@@ -1312,11 +1314,14 @@ risk_E:
   - group_id: risk_e_profitability
     activation_metrics:
     - 매출원가율
+    - 매출총이익
+    - 판매비와관리비
     - 영업이익
+    - 이자수익
+    - 이자비용
     - 당기순이익
-    - 매출액영업이익율
     include_metrics:
-    guidance_text: 수익성 변화 관점에서 매출원가율 -> 영업이익 -> 당기순이익 흐름으로 연결하고, 변동이 큰 지표를 우선 설명한다.
+    guidance_text: 수익성 변화 관점에서 손익 흐름에 따라 상위 원인을 연결 분석한다. 당기순이익 변동 시 영업이익·이자비용 등 변동폭이 큰 상위 지표를 우선 연결한다.
     enabled: true
   - group_id: risk_e_factoring
     activation_metrics:
