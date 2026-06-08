@@ -16,7 +16,7 @@ _defaults:
     conditions:
     - type: period_change_threshold
       measure: absolute
-    - type: sign_cross_zero
+    - type: sign_cross_zero 
 
 base:
   name: 기본 계산
@@ -1291,6 +1291,7 @@ risk_E:
     - 매출액영업이익율 등 비율 지표는 단독으로 설명하지 말고, 관련 손익 지표(영업이익·당기순이익 등)와 연결하여 설명한다.
     - 해석은 가능한 범위에서 전년 대비 → 업종평균 → 지표 간 관계 순서를 따른다.
     - 표 수치·변화만 근거로 사용하고, 회계 사건·일회성 비용 등 구체 원인 추정은 금지한다.
+    - 연결 가능한 주요 지표들의 변동만으로 결과 지표의 증감 규모를 충분히 설명하기 어려운 경우에는 "기타 손익요인의 영향 가능성이 존재함", "추가 요인 확인이 필요함" 등으로만 서술하고 구체적 원인을 추정하지 않는다.
   interpretation_groups:
   - group_id: risk_e_stability
     activation_metrics:
@@ -1317,11 +1318,15 @@ risk_E:
     - 매출총이익
     - 판매비와관리비
     - 영업이익
+    - 영업외수익
     - 이자수익
+    - 영업외비용
     - 이자비용
     - 당기순이익
     include_metrics:
-    guidance_text: 수익성 변화 관점에서 손익 흐름에 따라 상위 원인을 연결 분석한다. 당기순이익 변동 시 영업이익·이자비용 등 변동폭이 큰 상위 지표를 우선 연결한다.
+    guidance_text: 
+      - 당기순이익 변동 시 영업이익·이자비용 등 변동폭이 큰 상위 지표를 우선 연결한다.
+      - 흑자/적자 폭이 확대된 이유에 대해 설명한다.
     enabled: true
   - group_id: risk_e_factoring
     activation_metrics:
@@ -1340,7 +1345,7 @@ risk_E:
     - 당기순이익
     include_metrics:
     - 이자비용
-    guidance_text: 영업이익은 양호하지만 EBITDA와의 차이가 크면 감가상각비 등 비현금성비용 영향이 크다는 뜻일 수 있고, 당기순이익이 더 약하다면 금융비용이나 비영업손실 부담이 크다고 해석할 수 있다.
+    guidance_text: 영업이익은 양호하지만 EBITDA와의 차이가 크면 감가상각비 등 비현금성비용 영향이 크다는 뜻일 수 있고, 당기순이익이 더 약하다면 금융비용이나 비영업손실 부담이 있을 수 있다고 해석할 수 있다.
     enabled: true
   - group_id: risk_e_financial_burden
     activation_metrics:
@@ -1349,7 +1354,7 @@ risk_E:
     include_metrics:
     - 이자비용
     - 이자수익
-    guidance_text: 영업이익 대비 당기순이익이 약할수록 이자비용 등 금융손익 부담이 크게 작용한 것으로 볼 수 있고, 이자수익이 증가하면 그 부담을 일부 완화하는 요인으로 해석할 수 있다.
+    guidance_text: 영업이익 대비 당기순이익이 약할수록 이자비용 부담이 작용한 것으로 볼 수 있고, 이자수익이 증가하면 그 부담을 일부 완화하는 요인 중 하나로 해석할 수 있다.
     enabled: true
   - group_id: risk_e_cogs_gross_profit
     activation_metrics:
