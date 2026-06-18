@@ -246,3 +246,18 @@ presets:
           enabled: true
           rules: []
 
+# ═══════════════════════════════════════════
+# Analytical View Service (YAML / KG backend)
+# ═══════════════════════════════════════════
+analytical_view_service:
+  backend: kg
+  hybrid: true
+  backends:
+    yaml:
+      class_path: cla_langgraph.services.yaml_analytical_view_service.YamlAnalyticalViewService
+    kg:
+      class_path: cla_ontology_engine.service.kg_analytical_view_service.KgAnalyticalViewService
+      tbox_path: data/kg/cla-schema.ttl
+      abox_path: data/kg/generated-config.ttl
+      infer_on_load: true
+

@@ -1,0 +1,40 @@
+version: "0.1"
+
+# 단순 필드: code_key → 한글 라벨
+fields:
+  custNm: "사업자명"
+  rscoRegNo: "사업자번호"
+  MMO0001: "설립년월"
+  MMO0002: "사업자명"
+  MMO0003: "주소"
+  MMO0004: "대표자"
+  MMO0006: "업종(표준산업분류)"
+  MMO0847: "외감구분"
+  MMO0848: "기업규모"
+
+# 중첩 컬렉션
+collections:
+  registGrids:
+    label: "여신신청내역"
+    item_label: "신청건"
+    fields:
+      prdKornNm: "여신과목(여신종류)"
+      apcAmt: "여신(한도)금액"
+      lnApcDvNm: "거래구분"
+      lonTrmDvNm: "대출기간"
+      rpayMethNm: "상환방식"
+      rpayIntvDvNm: "상환주기"
+      guarCtt: "채권보전방안"
+      cltrKindCtt: "담보종류"
+  exposurePtcls:
+    label: "여신노출내역"
+    item_label: "노출건"
+    fields:
+      prdNm: "과목"
+      thcasDvNm: "거래구분"
+      updBfLimFrcAmt: "변경전한도금액"
+      icdcLimAmt: "증감한도금액"
+      cltrKindCtt: "담보종류"
+      guarCtt: "보증내용"
+      valdCltrAmt: "유효담보금액"
+      rmkMttr: "비고"

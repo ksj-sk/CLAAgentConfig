@@ -1,0 +1,1531 @@
+@prefix cla: <https://hit.hanati.co.kr/ontology/cla#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+cla:AV_business_performance a cla:AnalyticalView ;
+    skos:prefLabel "수익성 + 성장"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_accountsReceivableToRevenueRatio,
+        cla:Metric_accountsReceivableTurnoverDays,
+        cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_ebit,
+        cla:Metric_grossProfitMargin,
+        cla:Metric_netProfitMargin,
+        cla:Metric_operatingProfitMargin,
+        cla:Metric_revenueGrowthRate,
+        cla:Metric_totalAssetsGrowthRate ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_cls a cla:AnalyticalView ;
+    skos:prefLabel "현금 유동성 확보 현황"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_accountsPayableTurnoverDays,
+        cla:Metric_accountsReceivableTurnoverDays,
+        cla:Metric_cashFlowBeforeExternalFinancing,
+        cla:Metric_fcf,
+        cla:Metric_inventoryTurnoverDays,
+        cla:Metric_netWorkingCapitalRatio,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_totalCashDeposits,
+        cla:Metric_workingCapital ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_cs_dra a cla:AnalyticalView ;
+    skos:prefLabel "종합 건전성 및 부도 위험 분석"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_altmanZScore,
+        cla:Metric_dsbi,
+        cla:Metric_ebitdaGrowthRate ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_dcs a cla:AnalyticalView ;
+    skos:prefLabel "부채/자본 구조"^^xsd:string ;
+    cla:guidanceText """- 자본구조·부채 관련 지표는 총차입금·유동·비유동 부채 등 하위 항목 변동과 연결해 서술할 것.
+- 부채비율은 본문에서 직접 언급하지 말고, 자기자본비율·차입금의존도 등으로 완곡히 설명할 것.""" ;
+    cla:hasTargetMetric cla:Metric_borrowingDependencyRatio,
+        cla:Metric_borrowingWeight,
+        cla:Metric_currentLiabilitiesWeight,
+        cla:Metric_currentRatio,
+        cla:Metric_debtRatio,
+        cla:Metric_equityRatio,
+        cla:Metric_netBorrowingRatio,
+        cla:Metric_netDebt,
+        cla:Metric_tangibleAssetsRatio,
+        cla:Metric_totalBorrowings ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_debt_repayment a cla:AnalyticalView ;
+    skos:prefLabel "상환능력 + 현금흐름"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_cashFlowToDebt,
+        cla:Metric_debtToEbitda,
+        cla:Metric_dscr,
+        cla:Metric_ebitda,
+        cla:Metric_financialCostBurdenRatio,
+        cla:Metric_interestCoverageRatio,
+        cla:Metric_operatingCashFlow ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_exp_pc a cla:AnalyticalView ;
+    skos:prefLabel "수출 및 수익성 변동"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_accountsReceivableToRevenueRatio,
+        cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_grossProfitMargin,
+        cla:Metric_netProfitMargin,
+        cla:Metric_operatingProfitMargin,
+        cla:Metric_revenueGrowthRate,
+        cla:Metric_sellingGeneralAdminExpenses,
+        cla:Metric_sgnaRatio,
+        cla:Metric_totalAssetsGrowthRate ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_financial_risk a cla:AnalyticalView ;
+    skos:prefLabel "재무구조 + 유동성"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_borrowingDependencyRatio,
+        cla:Metric_currentRatio,
+        cla:Metric_debtRatio,
+        cla:Metric_equityRatio,
+        cla:Metric_netBorrowingRatio,
+        cla:Metric_netDebt,
+        cla:Metric_totalDebt,
+        cla:Metric_totalEquity ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_inv_bas a cla:AnalyticalView ;
+    skos:prefLabel "투자 및 사업 인수 현황"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_fixedAssetTurnover,
+        cla:Metric_nonCurrentAssets,
+        cla:Metric_revenueGrowthRate,
+        cla:Metric_tangibleAssets,
+        cla:Metric_totalAssetTurnover,
+        cla:Metric_totalAssetsGrowthRate ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_irc_ocf a cla:AnalyticalView ;
+    skos:prefLabel "이자상환능력 및 영업현금흐름"^^xsd:string ;
+    cla:guidanceText """- 이자·원리금 상환 여력은 영업이익·영업활동현금흐름·이자비용 간 관계를 표 수치에 근거해 연결할 것.
+- DSCR·이자보상배율·현금이자보상배율 중 변동이 큰 지표를 우선 반영할 것.""" ;
+    cla:hasTargetMetric cla:Metric_cashFlowToDebt,
+        cla:Metric_cashGenerationToOperatingIncomeRatio,
+        cla:Metric_cashInterestCoverageRatio,
+        cla:Metric_debtToEbitda,
+        cla:Metric_dscr,
+        cla:Metric_financialCostBurdenRatio,
+        cla:Metric_interestCoverageRatio ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_overall a cla:AnalyticalView ;
+    skos:prefLabel "전체"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_accountsPayableTurnoverDays,
+        cla:Metric_accountsReceivableToRevenueRatio,
+        cla:Metric_accountsReceivableTurnoverDays,
+        cla:Metric_adjustedEbit,
+        cla:Metric_borrowingDependencyRatio,
+        cla:Metric_borrowingWeight,
+        cla:Metric_cashFlowBeforeExternalFinancing,
+        cla:Metric_cashFlowToDebt,
+        cla:Metric_cashGenerationToOperatingIncomeRatio,
+        cla:Metric_cashInterestCoverageRatio,
+        cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_currentLiabilitiesWeight,
+        cla:Metric_currentRatio,
+        cla:Metric_debtRatio,
+        cla:Metric_debtToEbitda,
+        cla:Metric_dscr,
+        cla:Metric_ebit,
+        cla:Metric_equityRatio,
+        cla:Metric_fcf,
+        cla:Metric_financialCostBurdenRatio,
+        cla:Metric_fixedAssetTurnover,
+        cla:Metric_grossProfitMargin,
+        cla:Metric_interestCoverageRatio,
+        cla:Metric_inventoryTurnoverDays,
+        cla:Metric_netBorrowingRatio,
+        cla:Metric_netDebt,
+        cla:Metric_netProfitMargin,
+        cla:Metric_netWorkingCapitalRatio,
+        cla:Metric_nonCurrentAssets,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_operatingProfitMargin,
+        cla:Metric_principalAndInterestRepayment,
+        cla:Metric_revenueGrowthRate,
+        cla:Metric_sellingGeneralAdminExpenses,
+        cla:Metric_sgnaRatio,
+        cla:Metric_tangibleAssets,
+        cla:Metric_tangibleAssetsRatio,
+        cla:Metric_totalAssetTurnover,
+        cla:Metric_totalAssetsGrowthRate,
+        cla:Metric_totalBorrowings,
+        cla:Metric_totalCashDeposits,
+        cla:Metric_totalDebt,
+        cla:Metric_totalEquity,
+        cla:Metric_workingCapital ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_performance a cla:AnalyticalView ;
+    skos:prefLabel "수익성 + 성장"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_accountsReceivableToRevenueRatio,
+        cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_fixedAssetTurnover,
+        cla:Metric_grossProfitMargin,
+        cla:Metric_netProfitMargin,
+        cla:Metric_operatingProfitMargin,
+        cla:Metric_revenueGrowthRate,
+        cla:Metric_tangibleAssetsRatio,
+        cla:Metric_totalAssetTurnover,
+        cla:Metric_totalAssetsGrowthRate ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_performance_D a cla:AnalyticalView ;
+    skos:prefLabel "수익성 + 성장 + 운영 효율"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_accountsReceivable,
+        cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_grossProfit,
+        cla:Metric_interestExpense,
+        cla:Metric_interestIncome,
+        cla:Metric_inventory,
+        cla:Metric_netIncome,
+        cla:Metric_operatingIncome,
+        cla:Metric_operatingIncomeToRevenueRatio,
+        cla:Metric_revenue,
+        cla:Metric_sellingGeneralAdminExpenses ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_pre_calculation a cla:AnalyticalView ;
+    skos:prefLabel "기본 계산"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_adjustedEbit,
+        cla:Metric_costOfGoodsSold,
+        cla:Metric_currentAssets,
+        cla:Metric_currentLiabilities,
+        cla:Metric_ebit,
+        cla:Metric_ebitdaGrowthRate,
+        cla:Metric_intangibleAssets,
+        cla:Metric_nonCurrentLiabilities,
+        cla:Metric_nonOperatingExpenses,
+        cla:Metric_nonOperatingIncome,
+        cla:Metric_principalAndInterestRepayment,
+        cla:Metric_retainedEarningsEtc,
+        cla:Metric_totalAssets,
+        cla:Metric_totalDebt,
+        cla:Metric_totalEquity ;
+    cla:isReportable false ;
+    cla:viewRole cla:VR_pre_calculation .
+
+cla:AV_risk a cla:AnalyticalView ;
+    skos:prefLabel "안정성 + 상환능력"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_borrowingDependencyRatio,
+        cla:Metric_borrowingWeight,
+        cla:Metric_cashFlowToDebt,
+        cla:Metric_cashGenerationToOperatingIncomeRatio,
+        cla:Metric_cashInterestCoverageRatio,
+        cla:Metric_currentLiabilitiesWeight,
+        cla:Metric_currentRatio,
+        cla:Metric_debtRatio,
+        cla:Metric_debtToEbitda,
+        cla:Metric_dscr,
+        cla:Metric_equityRatio,
+        cla:Metric_fcf,
+        cla:Metric_financialCostBurdenRatio,
+        cla:Metric_interestCoverageRatio,
+        cla:Metric_netBorrowingRatio,
+        cla:Metric_netDebt,
+        cla:Metric_netWorkingCapitalRatio,
+        cla:Metric_workingCapital ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_risk_D a cla:AnalyticalView ;
+    skos:prefLabel "재무구조 + 상환능력 + 현금흐름"^^xsd:string ;
+    cla:hasTargetMetric cla:Metric_borrowingDependencyRatio,
+        cla:Metric_currentRatio,
+        cla:Metric_debtRatio,
+        cla:Metric_ebitda,
+        cla:Metric_equityRatio,
+        cla:Metric_financingCashFlow,
+        cla:Metric_interestCoverageRatio,
+        cla:Metric_investingCashFlow,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_totalBorrowings,
+        cla:Metric_workingCapital ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:AV_risk_E a cla:AnalyticalView ;
+    skos:prefLabel "안정성 및 상환능력"^^xsd:string ;
+    cla:guidanceText """- 표에 있는 활성 지표만 사용하고, 표에 없는 지표·영역은 생략한다.
+- 부채비율은 본문에서 직접 언급하지 말고 자기자본비율·차입금의존도·총차입금 중심으로 서술한다.
+- 재무안정성/단기지급능력/상환능력 및 재무부담/현금창출력/수익성 변화 관점으로 영역 단위 서술을 구성한다.
+- 해석은 가능한 범위에서 전년 대비 -> 업종평균 -> 지표 간 관계 순서를 따른다.
+- 표 수치·변화만 근거로 사용하고, 회계 사건·일회성 비용 등 구체 원인 추정은 금지한다.""" ;
+    cla:hasTargetGroup cla:CIG_risk_e_cogs_gross_profit,
+        cla:CIG_risk_e_debt_service,
+        cla:CIG_risk_e_ebitda_gap,
+        cla:CIG_risk_e_factoring,
+        cla:CIG_risk_e_financial_burden,
+        cla:CIG_risk_e_margin_cost_pressure,
+        cla:CIG_risk_e_profitability,
+        cla:CIG_risk_e_receivables_factoring_signal,
+        cla:CIG_risk_e_stability ;
+    cla:hasTargetMetric cla:Metric_borrowingDependencyRatio,
+        cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_currentRatio,
+        cla:Metric_debtToEbitda,
+        cla:Metric_ebitda,
+        cla:Metric_equityRatio,
+        cla:Metric_interestCoverageRatio,
+        cla:Metric_netIncome,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_operatingIncome,
+        cla:Metric_operatingIncomeToRevenueRatio,
+        cla:Metric_receivablesAssignmentAmount,
+        cla:Metric_totalBorrowings ;
+    cla:isReportable true ;
+    cla:viewRole cla:VR_analysis .
+
+cla:CIG_risk_e_cogs_gross_profit a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_cogs_gross_profit" ;
+    cla:guidanceText "매출원가율이 상승하면 같은 매출액 기준에서 매출총이익은 감소하는 방향으로 움직이므로, 원가통제 수준이 약화될수록 본업의 1차 수익창출력도 함께 저하될 가능성이 높다." ;
+    cla:hasActivationMetric cla:Metric_costOfGoodsSoldRatio ;
+    cla:includesMetric cla:Metric_grossProfit,
+        cla:Metric_operatingIncome ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_debt_service a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_debt_service" ;
+    cla:guidanceText "EBITDA가 증가하더라도 총차입금과 이자비용이 더 빠르게 늘면 이자보상배율 개선이 제한될 수 있어, 상환여력 평가는 수익창출력과 부채부담을 함께 봐야 한다. 수익창출력 관점은 영업활동현금흐름과 EBITDA를 함께 비교한다." ;
+    cla:hasActivationMetric cla:Metric_ebitda,
+        cla:Metric_interestCoverageRatio ;
+    cla:includesMetric cla:Metric_debtToEbitda,
+        cla:Metric_operatingCashFlow ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_ebitda_gap a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_ebitda_gap" ;
+    cla:guidanceText "영업이익은 양호하지만 EBITDA와의 차이가 크면 감가상각비 등 비현금성비용 영향이 크다는 뜻일 수 있고, 당기순이익이 더 약하다면 금융비용이나 비영업손실 부담이 크다고 해석할 수 있다." ;
+    cla:hasActivationMetric cla:Metric_ebitda,
+        cla:Metric_netIncome,
+        cla:Metric_operatingIncome ;
+    cla:includesMetric cla:Metric_interestExpense ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_factoring a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_factoring" ;
+    cla:guidanceText "매출채권·재고자산 증가로 운전자본이 확대되면 영업현금이 약해질 수 있고, 당기순이익과 비교하면 이익의 질, 기말현금과 비교하면 유동성 지속성을 판단할 수 있다." ;
+    cla:hasActivationMetric cla:Metric_accountsReceivable,
+        cla:Metric_inventory ;
+    cla:includesMetric cla:Metric_netIncome,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_receivablesAssignmentAmount ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_financial_burden a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_financial_burden" ;
+    cla:guidanceText "영업이익 대비 당기순이익이 약할수록 이자비용 등 금융손익 부담이 크게 작용한 것으로 볼 수 있고, 이자수익이 증가하면 그 부담을 일부 완화하는 요인으로 해석할 수 있다." ;
+    cla:hasActivationMetric cla:Metric_netIncome,
+        cla:Metric_operatingIncome ;
+    cla:includesMetric cla:Metric_interestExpense,
+        cla:Metric_interestIncome ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_margin_cost_pressure a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_margin_cost_pressure" ;
+    cla:guidanceText "매출액영업이익율이 하락할 때 매출원가율 상승과 판관비 증가가 함께 나타난다면, 이는 원가와 비용 부담이 동시에 확대되어 운영효율이 전반적으로 저하되고 있음을 시사한다." ;
+    cla:hasActivationMetric cla:Metric_operatingIncomeToRevenueRatio ;
+    cla:includesMetric cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_sellingGeneralAdminExpenses ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_profitability a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_profitability" ;
+    cla:guidanceText "수익성 변화 관점에서 매출원가율 -> 영업이익 -> 당기순이익 흐름으로 연결하고, 변동이 큰 지표를 우선 설명한다." ;
+    cla:hasActivationMetric cla:Metric_costOfGoodsSoldRatio,
+        cla:Metric_netIncome,
+        cla:Metric_operatingIncome,
+        cla:Metric_operatingIncomeToRevenueRatio ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_receivables_factoring_signal a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_receivables_factoring_signal" ;
+    cla:guidanceText "기업이 외상매출채권을 담보대출·팩토링 등으로 현금화한 규모를 뜻하므로, 자금사정과 운전자금 의존도를 보여주는 지표로, 금액이 크고 반복되면 유동성 압박 신호로 해석할 수 있고, 반대로 업종 특성상 일시적으로 쓰는 수준이면 정상적인 자금조달 수단으로 설명한다." ;
+    cla:hasActivationMetric cla:Metric_receivablesAssignmentAmount ;
+    cla:includesMetric cla:Metric_accountsReceivable,
+        cla:Metric_netIncome,
+        cla:Metric_operatingCashFlow ;
+    cla:isEnabled true .
+
+cla:CIG_risk_e_stability a cla:CompositeInterpretationGroup ;
+    cla:groupId "risk_e_stability" ;
+    cla:guidanceText "총차입금 증가는 이자비용·차입금의존도·부채비율 상승으로 이어질 수 있으며, 수익창출력이 충분히 뒷받침되지 않으면 이자보상배율 하락을 통해 차입부담 확대가 나타날 수 있다." ;
+    cla:hasActivationMetric cla:Metric_borrowingDependencyRatio,
+        cla:Metric_totalBorrowings ;
+    cla:includesMetric cla:Metric_debtRatio,
+        cla:Metric_interestCoverageRatio,
+        cla:Metric_interestExpense ;
+    cla:isEnabled true .
+
+cla:Formula_accountsReceivableToRevenueRatio a cla:Formula ;
+    cla:formulaText "매출채권 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_accountsReceivable,
+        cla:Metric_revenue .
+
+cla:Formula_adjustedEbit a cla:Formula ;
+    cla:formulaText "영업이익 + (영업외수익 - 이자수익) - (영업외비용 - 이자비용)" ;
+    cla:hasOperand cla:Metric_interestExpense,
+        cla:Metric_interestIncome,
+        cla:Metric_nonOperatingExpenses,
+        cla:Metric_nonOperatingIncome,
+        cla:Metric_operatingIncome .
+
+cla:Formula_altmanZScore a cla:Formula ;
+    cla:formulaText "1.2 * (운전자본/자산총계) + 1.4 * (잉여금등/자산총계) + 3.3 * (EBIT/자산총계) + 0.6 * (자본총계/부채총계) + 1.0 * (매출액/자산총계)" ;
+    cla:hasOperand cla:Metric_ebit,
+        cla:Metric_retainedEarningsEtc,
+        cla:Metric_revenue,
+        cla:Metric_totalAssets,
+        cla:Metric_totalDebt,
+        cla:Metric_totalEquity,
+        cla:Metric_workingCapital .
+
+cla:Formula_borrowingDependencyRatio a cla:Formula ;
+    cla:formulaText "총차입금 / 자산총계 * 100" ;
+    cla:hasOperand cla:Metric_totalAssets,
+        cla:Metric_totalBorrowings .
+
+cla:Formula_borrowingWeight a cla:Formula ;
+    cla:formulaText "총차입금 / 부채총계 * 100" ;
+    cla:hasOperand cla:Metric_totalBorrowings,
+        cla:Metric_totalDebt .
+
+cla:Formula_bsGearing a cla:Formula ;
+    cla:formulaText "총차입금 / Tangible Net Worth * 100" ;
+    cla:hasOperand cla:Metric_tangibleNetWorth,
+        cla:Metric_totalBorrowings .
+
+cla:Formula_cashFlowToDebt a cla:Formula ;
+    cla:formulaText "영업활동현금흐름 / 부채총계" ;
+    cla:hasOperand cla:Metric_operatingCashFlow,
+        cla:Metric_totalDebt .
+
+cla:Formula_cashGenerationToOperatingIncomeRatio a cla:Formula ;
+    cla:formulaText "영업활동현금흐름 / 영업이익 * 100" ;
+    cla:hasOperand cla:Metric_operatingCashFlow,
+        cla:Metric_operatingIncome .
+
+cla:Formula_cashInterestCoverageRatio a cla:Formula ;
+    cla:formulaText "영업활동현금흐름 / 이자비용" ;
+    cla:hasOperand cla:Metric_interestExpense,
+        cla:Metric_operatingCashFlow .
+
+cla:Formula_cashRatio a cla:Formula ;
+    cla:formulaText "총현금예금 / 유동부채 * 100" ;
+    cla:hasOperand cla:Metric_currentLiabilities,
+        cla:Metric_totalCashDeposits .
+
+cla:Formula_ccc a cla:Formula ;
+    cla:formulaText "매출채권회전기간(일) + 재고자산회전기간(일) - 매입채무회전기간(일)" ;
+    cla:hasOperand cla:Metric_accountsPayableTurnoverDays,
+        cla:Metric_accountsReceivableTurnoverDays,
+        cla:Metric_inventoryTurnoverDays .
+
+cla:Formula_costOfGoodsSoldRatio a cla:Formula ;
+    cla:formulaText "매출원가 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_costOfGoodsSold,
+        cla:Metric_revenue .
+
+cla:Formula_currentLiabilitiesWeight a cla:Formula ;
+    cla:formulaText "유동부채 / 부채총계 * 100" ;
+    cla:hasOperand cla:Metric_currentLiabilities,
+        cla:Metric_totalDebt .
+
+cla:Formula_currentRatio a cla:Formula ;
+    cla:formulaText "유동자산 / 유동부채 * 100" ;
+    cla:hasOperand cla:Metric_currentAssets,
+        cla:Metric_currentLiabilities .
+
+cla:Formula_debtRatio a cla:Formula ;
+    cla:formulaText "부채총계 / 자본총계 × 100" ;
+    cla:hasOperand cla:Metric_totalDebt,
+        cla:Metric_totalEquity .
+
+cla:Formula_debtToEbitda a cla:Formula ;
+    cla:formulaText "총차입금 / EBITDA" ;
+    cla:hasOperand cla:Metric_ebitda,
+        cla:Metric_totalBorrowings .
+
+cla:Formula_dsbi a cla:Formula ;
+    cla:formulaText "(이자비용 + 원리금상환액) / 영업활동현금흐름" ;
+    cla:hasOperand cla:Metric_interestExpense,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_principalAndInterestRepayment .
+
+cla:Formula_dscr a cla:Formula ;
+    cla:formulaText "(영업활동현금흐름 + 이자비용) / (이자비용 + 원리금상환액)" ;
+    cla:hasOperand cla:Metric_interestExpense,
+        cla:Metric_operatingCashFlow,
+        cla:Metric_principalAndInterestRepayment .
+
+cla:Formula_ebit a cla:Formula ;
+    cla:formulaText "영업이익 + 영업외수익 - 영업외비용" ;
+    cla:hasOperand cla:Metric_nonOperatingExpenses,
+        cla:Metric_nonOperatingIncome,
+        cla:Metric_operatingIncome .
+
+cla:Formula_ebitdaMargin a cla:Formula ;
+    cla:formulaText "EBITDA / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_ebitda,
+        cla:Metric_revenue .
+
+cla:Formula_equityRatio a cla:Formula ;
+    cla:formulaText "자본총계 / 자산총계 × 100" ;
+    cla:hasOperand cla:Metric_totalAssets,
+        cla:Metric_totalEquity .
+
+cla:Formula_fcf a cla:Formula ;
+    cla:formulaText "영업활동현금흐름 + 투자활동현금흐름" ;
+    cla:hasOperand cla:Metric_investingCashFlow,
+        cla:Metric_operatingCashFlow .
+
+cla:Formula_financialCostBurdenRatio a cla:Formula ;
+    cla:formulaText "이자비용 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_interestExpense,
+        cla:Metric_revenue .
+
+cla:Formula_fixedAssetTurnover a cla:Formula ;
+    cla:formulaText "매출액 / 유형자산" ;
+    cla:hasOperand cla:Metric_revenue,
+        cla:Metric_tangibleAssets .
+
+cla:Formula_fixedLongTermSuitabilityRatio a cla:Formula ;
+    cla:formulaText "비유동자산 / (비유동부채 + 자본총계) * 100" ;
+    cla:hasOperand cla:Metric_nonCurrentAssets,
+        cla:Metric_nonCurrentLiabilities,
+        cla:Metric_totalEquity .
+
+cla:Formula_grossProfitMargin a cla:Formula ;
+    cla:formulaText "매출총이익 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_grossProfit,
+        cla:Metric_revenue .
+
+cla:Formula_interestCover a cla:Formula ;
+    cla:formulaText "EBITDA / 이자비용" ;
+    cla:hasOperand cla:Metric_ebitda,
+        cla:Metric_interestExpense .
+
+cla:Formula_interestCoverageRatio a cla:Formula ;
+    cla:formulaText "영업이익 / 이자비용" ;
+    cla:hasOperand cla:Metric_interestExpense,
+        cla:Metric_operatingIncome .
+
+cla:Formula_netBorrowingRatio a cla:Formula ;
+    cla:formulaText "Net Debt / 자본총계 * 100" ;
+    cla:hasOperand cla:Metric_netDebt,
+        cla:Metric_totalEquity .
+
+cla:Formula_netDebt a cla:Formula ;
+    cla:formulaText "총차입금 - 총현금예금" ;
+    cla:hasOperand cla:Metric_totalBorrowings,
+        cla:Metric_totalCashDeposits .
+
+cla:Formula_netProfitMargin a cla:Formula ;
+    cla:formulaText "당기순이익 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_netIncome,
+        cla:Metric_revenue .
+
+cla:Formula_netWorkingCapitalRatio a cla:Formula ;
+    cla:formulaText "운전자본 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_revenue,
+        cla:Metric_workingCapital .
+
+cla:Formula_operatingProfitMargin a cla:Formula ;
+    cla:formulaText "영업이익 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_operatingIncome,
+        cla:Metric_revenue .
+
+cla:Formula_roa a cla:Formula ;
+    cla:formulaText "당기순이익 / 자산총계 * 100" ;
+    cla:hasOperand cla:Metric_netIncome,
+        cla:Metric_totalAssets .
+
+cla:Formula_roe a cla:Formula ;
+    cla:formulaText "당기순이익 / 자본총계 * 100" ;
+    cla:hasOperand cla:Metric_netIncome,
+        cla:Metric_totalEquity .
+
+cla:Formula_sgnaRatio a cla:Formula ;
+    cla:formulaText "판매비와관리비 / 매출액 * 100" ;
+    cla:hasOperand cla:Metric_revenue,
+        cla:Metric_sellingGeneralAdminExpenses .
+
+cla:Formula_tangibleAssetsRatio a cla:Formula ;
+    cla:formulaText "유형자산 / 자산총계 * 100" ;
+    cla:hasOperand cla:Metric_tangibleAssets,
+        cla:Metric_totalAssets .
+
+cla:Formula_tangibleNetWorth a cla:Formula ;
+    cla:formulaText "자산총계 - 무형자산" ;
+    cla:hasOperand cla:Metric_intangibleAssets,
+        cla:Metric_totalAssets .
+
+cla:Formula_totalAssetTurnover a cla:Formula ;
+    cla:formulaText "매출액 / 자산총계" ;
+    cla:hasOperand cla:Metric_revenue,
+        cla:Metric_totalAssets .
+
+cla:Formula_totalDebt a cla:Formula ;
+    cla:formulaText "유동부채 + 비유동부채" ;
+    cla:hasOperand cla:Metric_currentLiabilities,
+        cla:Metric_nonCurrentLiabilities .
+
+cla:Formula_totalEquity a cla:Formula ;
+    cla:formulaText "자산총계 - 부채총계" ;
+    cla:hasOperand cla:Metric_totalAssets,
+        cla:Metric_totalDebt .
+
+cla:Formula_workingCapital a cla:Formula ;
+    cla:formulaText "유동자산 - 유동부채" ;
+    cla:hasOperand cla:Metric_currentAssets,
+        cla:Metric_currentLiabilities .
+
+cla:Metric_accountsPayableTurnoverDays a cla:Metric ;
+    skos:altLabel "Accounts Payable Turnover Days"^^xsd:string ;
+    skos:prefLabel "매입채무회전기간(일)"^^xsd:string ;
+    cla:description "외상지급 유예기간" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매입채무회전기간(일)" ;
+    cla:metricValueType cla:VT_days ;
+    cla:unit cla:UI_days .
+
+cla:Metric_accountsReceivable a cla:Metric ;
+    skos:altLabel "Accounts Receivable"^^xsd:string ;
+    skos:prefLabel "매출채권"^^xsd:string ;
+    cla:description "매출채권은 유동자산과 운전자본을 증가시키는 요인이지만, 매출채권 회수기간이 장기화되고 영업활동현금흐름이 부진한 경우에는 장부상 유동성 개선과 달리 실질 유동성은 약화된 것으로 해석할 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출채권" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_accountsReceivableToRevenueRatio a cla:Metric ;
+    skos:altLabel "Accounts Receivable to Revenue Ratio"^^xsd:string ;
+    skos:prefLabel "매출채권/매출액 비율"^^xsd:string ;
+    cla:description "외상매출 의존도" ;
+    cla:hasFormula cla:Formula_accountsReceivableToRevenueRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "매출채권/매출액 비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_accountsReceivableTurnoverDays a cla:Metric ;
+    skos:altLabel "Accounts Receivable Turnover Days"^^xsd:string ;
+    skos:prefLabel "매출채권회전기간(일)"^^xsd:string ;
+    cla:description "외상회수 속도" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출채권회전기간(일)" ;
+    cla:metricValueType cla:VT_days ;
+    cla:unit cla:UI_days .
+
+cla:Metric_adjustedEbit a cla:Metric ;
+    skos:altLabel "Adjusted EBIT"^^xsd:string ;
+    skos:prefLabel "조정형EBIT"^^xsd:string ;
+    cla:description "순수 영업기반 수익성" ;
+    cla:hasFormula cla:Formula_adjustedEbit ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "조정형EBIT" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_altmanZScore a cla:Metric ;
+    skos:altLabel "Altman Z-Score"^^xsd:string ;
+    skos:prefLabel "Altman Z-Score"^^xsd:string ;
+    cla:description "부도 가능성 예측 (1.8 이하: 부도가능성 높음, 3.0 이상: 건전)" ;
+    cla:hasFormula cla:Formula_altmanZScore ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "Altman Z-Score" ;
+    cla:metricValueType cla:VT_multiple ;
+    cla:unit cla:UI_multiple .
+
+cla:Metric_borrowingDependencyRatio a cla:Metric ;
+    skos:altLabel "Borrowing Dependency Ratio"^^xsd:string ;
+    skos:prefLabel "차입금의존도"^^xsd:string ;
+    cla:description "전체 자산 중 차입금의 비중을 나타내며, 30% 이하이면 재무구조 양호" ;
+    cla:hasFormula cla:Formula_borrowingDependencyRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_99bce6d3a942 ;
+    cla:isInputMetric false ;
+    cla:metricId "차입금의존도" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_borrowingWeight a cla:Metric ;
+    skos:altLabel "Borrowing Weight"^^xsd:string ;
+    skos:prefLabel "차입금 비중"^^xsd:string ;
+    cla:description "부채 중 금융성 부채 비율" ;
+    cla:hasFormula cla:Formula_borrowingWeight ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "차입금 비중" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_bsGearing a cla:Metric ;
+    skos:altLabel "B/S Gearing"^^xsd:string ;
+    skos:prefLabel "B/S Gearing"^^xsd:string ;
+    cla:description "레버리지 수준 (차입금 대비 자본 여력)" ;
+    cla:hasFormula cla:Formula_bsGearing ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "B/S Gearing" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_cashAndCashEquivalentsAtEnd a cla:Metric ;
+    skos:altLabel "Cash and Cash Equivalents at End"^^xsd:string ;
+    skos:prefLabel "기말현금과현금등가물"^^xsd:string ;
+    cla:description "유동자산이 증가하더라도 기말현금과현금등가물 비중이 낮다면 실질 유동성은 기대보다 약할 수 있으므로, 현금성자산 비중이 높을수록 유동자산의 질이 우수하다고 해석할 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "기말현금과현금등가물" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_cashFlowAfterNetFinancingCost a cla:Metric ;
+    skos:altLabel "Cash Flow After Net Financing Cost"^^xsd:string ;
+    skos:prefLabel "순자금조달비용 지급후 현금흐름"^^xsd:string ;
+    cla:description "실제 차입금 상환 후 남는 현금" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "순자금조달비용 지급후 현금흐름" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_cashFlowBeforeExternalFinancing a cla:Metric ;
+    skos:altLabel "Cash Flow Before External Financing"^^xsd:string ;
+    skos:prefLabel "외부자금조달전 현금흐름"^^xsd:string ;
+    cla:description "내생적 현금창출력" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "외부자금조달전 현금흐름" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_cashFlowToDebt a cla:Metric ;
+    skos:altLabel "Cash Flow to Debt"^^xsd:string ;
+    skos:prefLabel "Cash Flow to Debt"^^xsd:string ;
+    cla:description "부채 대비 현금창출 비율" ;
+    cla:hasFormula cla:Formula_cashFlowToDebt ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "Cash Flow to Debt" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_cashGenerationToOperatingIncomeRatio a cla:Metric ;
+    skos:altLabel "Cash Generation to Operating Income Ratio"^^xsd:string ;
+    skos:prefLabel "영업이익 대비 현금창출율"^^xsd:string ;
+    cla:description "회계상 영업이익의 현금화 정도" ;
+    cla:hasFormula cla:Formula_cashGenerationToOperatingIncomeRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "영업이익 대비 현금창출율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_cashInterestCoverageRatio a cla:Metric ;
+    skos:altLabel "Cash Interest Coverage Ratio"^^xsd:string ;
+    skos:prefLabel "현금이자보상배율"^^xsd:string ;
+    cla:description "실제 현금기반 상환여력" ;
+    cla:hasFormula cla:Formula_cashInterestCoverageRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "현금이자보상배율" ;
+    cla:metricValueType cla:VT_multiple ;
+    cla:unit cla:UI_multiple .
+
+cla:Metric_cashOperatingIncome a cla:Metric ;
+    skos:altLabel "Cash Operating Income"^^xsd:string ;
+    skos:prefLabel "현금영업이익"^^xsd:string ;
+    cla:description "영업활동 기반 현금수익" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "현금영업이익" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_cashRatio a cla:Metric ;
+    skos:altLabel "Cash Ratio"^^xsd:string ;
+    skos:prefLabel "현금비율"^^xsd:string ;
+    cla:description "즉시 현금화 가능한 자산으로 단기 부채를 감당할 수 있는 능력 지표로, 20% 이상이면 단기 유동성 양호로 평가" ;
+    cla:hasFormula cla:Formula_cashRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "현금비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_ccc a cla:Metric ;
+    skos:altLabel "Cash Conversion Cycle"^^xsd:string ;
+    skos:prefLabel "CCC (현금전환주기)"^^xsd:string ;
+    cla:description "영업현금 순환속도" ;
+    cla:hasFormula cla:Formula_ccc ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "CCC (현금전환주기)" ;
+    cla:metricValueType cla:VT_days ;
+    cla:unit cla:UI_days .
+
+cla:Metric_costOfGoodsSold a cla:Metric ;
+    skos:altLabel "Cost of Goods Sold"^^xsd:string ;
+    skos:prefLabel "매출원가"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출원가" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_costOfGoodsSoldRatio a cla:Metric ;
+    skos:altLabel "Cost of Goods Sold Ratio"^^xsd:string ;
+    skos:prefLabel "매출원가율"^^xsd:string ;
+    cla:description "원가 구조 파악" ;
+    cla:hasFormula cla:Formula_costOfGoodsSoldRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "매출원가율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_currentAssets a cla:Metric ;
+    skos:altLabel "Current Assets"^^xsd:string ;
+    skos:prefLabel "유동자산"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "유동자산" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_currentLiabilities a cla:Metric ;
+    skos:altLabel "Current Liabilities"^^xsd:string ;
+    skos:prefLabel "유동부채"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "유동부채" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_currentLiabilitiesWeight a cla:Metric ;
+    skos:altLabel "Current Liabilities Weight"^^xsd:string ;
+    skos:prefLabel "유동부채비중"^^xsd:string ;
+    cla:description "단기부채 집중도" ;
+    cla:hasFormula cla:Formula_currentLiabilitiesWeight ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "유동부채비중" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_currentRatio a cla:Metric ;
+    skos:altLabel "Current Ratio"^^xsd:string ;
+    skos:prefLabel "유동비율"^^xsd:string ;
+    cla:description "단기 부채를 상환할 수 있는 기본 유동성 지표로, 100% 미만이면 단기 지급 능력 취약, 200% 이상이면 안정적 유동성 유지로 판단" ;
+    cla:hasFormula cla:Formula_currentRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "유동비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_debtRatio a cla:Metric ;
+    skos:altLabel "Debt Ratio"^^xsd:string ;
+    skos:prefLabel "부채비율"^^xsd:string ;
+    cla:description "자본 대비 부채의 부담 수준을 나타내며, 100% 이하가 이상적, 200%를 초과하면 재무안정성 저하 위험이 있음" ;
+    cla:hasFormula cla:Formula_debtRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "부채비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_debtToEbitda a cla:Metric ;
+    skos:altLabel "Debt to EBITDA"^^xsd:string ;
+    skos:prefLabel "차입금/EBITDA"^^xsd:string ;
+    cla:description "차입금 상환 기간 추정" ;
+    cla:hasFormula cla:Formula_debtToEbitda ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "차입금/EBITDA" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_dsbi a cla:Metric ;
+    skos:altLabel "DSBI"^^xsd:string ;
+    skos:prefLabel "DSBI"^^xsd:string ;
+    cla:description "부채상환 부담 수준" ;
+    cla:hasFormula cla:Formula_dsbi ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "DSBI" ;
+    cla:metricValueType cla:VT_multiple ;
+    cla:unit cla:UI_multiple .
+
+cla:Metric_dscr a cla:Metric ;
+    skos:altLabel "DSCR"^^xsd:string ;
+    skos:prefLabel "DSCR"^^xsd:string ;
+    cla:description "현금창출로 부채상환 가능성" ;
+    cla:hasFormula cla:Formula_dscr ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "DSCR" ;
+    cla:metricValueType cla:VT_multiple ;
+    cla:unit cla:UI_multiple .
+
+cla:Metric_ebit a cla:Metric ;
+    skos:altLabel "EBIT"^^xsd:string ;
+    skos:prefLabel "EBIT"^^xsd:string ;
+    cla:hasFormula cla:Formula_ebit ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "EBIT" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_ebitda a cla:Metric ;
+    skos:altLabel "EBITDA"^^xsd:string ;
+    skos:prefLabel "EBITDA"^^xsd:string ;
+    cla:description "EBITDA가 증가하더라도 총차입금과 이자비용이 더 빠르게 늘면 이자보상배율 개선이 제한될 수 있어, 상환여력 평가는 수익창출력과 부채부담을 함께 봐야 한다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "EBITDA" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_ebitdaGrowthRate a cla:Metric ;
+    skos:altLabel "EBITDA Growth Rate"^^xsd:string ;
+    skos:prefLabel "EBITDA 성장률"^^xsd:string ;
+    cla:description "영업기반 현금이익의 성장 추세" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "EBITDA_성장률" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_ebitdaMargin a cla:Metric ;
+    skos:altLabel "EBITDA Margin"^^xsd:string ;
+    skos:prefLabel "EBITDA Margin"^^xsd:string ;
+    cla:description "현금기반 수익성" ;
+    cla:hasFormula cla:Formula_ebitdaMargin ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "EBITDA Margin" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_equityRatio a cla:Metric ;
+    skos:altLabel "Equity Ratio"^^xsd:string ;
+    skos:prefLabel "자기자본비율"^^xsd:string ;
+    cla:description "자본구조 안정성" ;
+    cla:hasFormula cla:Formula_equityRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "자기자본비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_fcf a cla:Metric ;
+    skos:altLabel "Free Cash Flow"^^xsd:string ;
+    skos:prefLabel "FCF (자유현금흐름)"^^xsd:string ;
+    cla:description "투자 후 잉여 현금" ;
+    cla:hasFormula cla:Formula_fcf ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "FCF (자유현금흐름)" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_financialCostBurdenRatio a cla:Metric ;
+    skos:altLabel "Financial Cost Burden Ratio"^^xsd:string ;
+    skos:prefLabel "금융비용부담율"^^xsd:string ;
+    cla:description "매출 대비 이자비용 부담" ;
+    cla:hasFormula cla:Formula_financialCostBurdenRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "금융비용부담율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_financingCashFlow a cla:Metric ;
+    skos:altLabel "Financing Cash Flow"^^xsd:string ;
+    skos:prefLabel "재무활동현금흐름"^^xsd:string ;
+    cla:description "재무활동현금흐름 유입이 커지는 시기에 총차입금이나 자본금잉여금등이 함께 증가한다면, 외부 차입이나 자본조달을 통해 자금을 확보하고 있는 구조로 볼 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "재무활동현금흐름" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_fixedAssetTurnover a cla:Metric ;
+    skos:altLabel "Fixed Asset Turnover"^^xsd:string ;
+    skos:prefLabel "고정자산회전율"^^xsd:string ;
+    cla:description "설비투자 생산성" ;
+    cla:hasFormula cla:Formula_fixedAssetTurnover ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "고정자산회전율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_fixedLongTermSuitabilityRatio a cla:Metric ;
+    skos:altLabel "Fixed Long-Term Suitability Ratio"^^xsd:string ;
+    skos:prefLabel "고정장기적합율"^^xsd:string ;
+    cla:description "고정자산이 장기자금으로 충당되는 비율로, 100% 미만이면 안정적 구조로 판단" ;
+    cla:hasFormula cla:Formula_fixedLongTermSuitabilityRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "고정장기적합율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_grossProfit a cla:Metric ;
+    skos:altLabel "Gross Profit"^^xsd:string ;
+    skos:prefLabel "매출총이익"^^xsd:string ;
+    cla:description "매출총이익이 감소하면서 매출원가율이 상승한다면 판매단가보다 원가 증가 압력이 더 크다는 의미일 수 있어, 본업의 채산성이 나빠지는 신호로 해석할 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출총이익" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_grossProfitMargin a cla:Metric ;
+    skos:altLabel "Gross Profit Margin"^^xsd:string ;
+    skos:prefLabel "매출총이익률"^^xsd:string ;
+    cla:description "상품 마진율" ;
+    cla:hasFormula cla:Formula_grossProfitMargin ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "매출총이익률" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_intangibleAssets a cla:Metric ;
+    skos:altLabel "Intangible Assets"^^xsd:string ;
+    skos:prefLabel "무형자산"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "무형자산" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_interestCover a cla:Metric ;
+    skos:altLabel "Interest Cover"^^xsd:string ;
+    skos:prefLabel "Interest Cover"^^xsd:string ;
+    cla:description "현금기반 이자상환 여력" ;
+    cla:hasFormula cla:Formula_interestCover ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "Interest Cover" ;
+    cla:metricValueType cla:VT_multiple ;
+    cla:unit cla:UI_multiple .
+
+cla:Metric_interestCoverageRatio a cla:Metric ;
+    skos:altLabel "Interest Coverage Ratio"^^xsd:string ;
+    skos:prefLabel "이자보상배율"^^xsd:string ;
+    cla:description "영업이익이 이자비용을 얼마나 커버하는지 보여주는 지표로, 1.5~3배 이상이면 안정적" ;
+    cla:hasFormula cla:Formula_interestCoverageRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "이자보상배율" ;
+    cla:metricValueType cla:VT_multiple ;
+    cla:unit cla:UI_multiple .
+
+cla:Metric_interestExpense a cla:Metric ;
+    skos:altLabel "Interest Expense"^^xsd:string ;
+    skos:prefLabel "이자비용"^^xsd:string ;
+    cla:description "이자비용은 총차입금에서 발생하는 직접적인 금융부담이므로, 총차입금이 증가할 때 이자비용도 함께 늘어나면 차입부담이 확대되고 있는 것으로 해석할 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "이자비용" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_interestIncome a cla:Metric ;
+    skos:altLabel "Interest Income"^^xsd:string ;
+    skos:prefLabel "이자수익"^^xsd:string ;
+    cla:description "이자수익이 증가해 당기순이익 개선에 기여하더라도 이는 영업성과와는 구분해야 하며, 본업 수익성이 약한 상황이라면 순이익 개선을 구조적 회복으로 보기는 어렵다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "이자수익" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_inventory a cla:Metric ;
+    skos:altLabel "Inventory"^^xsd:string ;
+    skos:prefLabel "재고자산"^^xsd:string ;
+    cla:description "재고자산이 증가할 때 매출원가율이 함께 상승하고 매출총이익 및 영업활동현금흐름이 악화된다면, 재고 부담이 수익성과 현금회수에 동시에 부정적 영향을 주고 있을 가능성이 높다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "재고자산" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_inventoryTurnoverDays a cla:Metric ;
+    skos:altLabel "Inventory Turnover Days"^^xsd:string ;
+    skos:prefLabel "재고자산회전기간(일)"^^xsd:string ;
+    cla:description "재고 처리 효율" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "재고자산회전기간(일)" ;
+    cla:metricValueType cla:VT_days ;
+    cla:unit cla:UI_days .
+
+cla:Metric_investingCashFlow a cla:Metric ;
+    skos:altLabel "Investing Cash Flow"^^xsd:string ;
+    skos:prefLabel "투자활동현금흐름"^^xsd:string ;
+    cla:description "투자 규모 및 방향성" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "투자활동현금흐름" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_netBorrowingRatio a cla:Metric ;
+    skos:altLabel "Net Borrowing Ratio"^^xsd:string ;
+    skos:prefLabel "순차입금비율"^^xsd:string ;
+    cla:description "순부채가 자기자본에 미치는 부담 수준을 나타내며, 20% 이하이면 안정적" ;
+    cla:hasFormula cla:Formula_netBorrowingRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "순차입금비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_netDebt a cla:Metric ;
+    skos:altLabel "Net Debt"^^xsd:string ;
+    skos:prefLabel "Net Debt"^^xsd:string ;
+    cla:description "순금융부채 규모" ;
+    cla:hasFormula cla:Formula_netDebt ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_7e4f12729ee2 ;
+    cla:isInputMetric false ;
+    cla:metricId "Net Debt" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_netIncome a cla:Metric ;
+    skos:altLabel "Net Income"^^xsd:string ;
+    skos:prefLabel "당기순이익"^^xsd:string ;
+    cla:description "영업이익 대비 당기순이익이 약할수록 이자비용 등 금융손익 부담이 크게 작용한 것으로 볼 수 있고, 이자수익이 증가하면 그 부담을 일부 완화하는 요인으로 해석할 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "당기순이익" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_netProfitMargin a cla:Metric ;
+    skos:altLabel "Net Profit Margin"^^xsd:string ;
+    skos:prefLabel "순이익률"^^xsd:string ;
+    cla:description "최종 수익성" ;
+    cla:hasFormula cla:Formula_netProfitMargin ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "순이익률" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_netWorkingCapitalRatio a cla:Metric ;
+    skos:altLabel "Net Working Capital Ratio"^^xsd:string ;
+    skos:prefLabel "순운전자본비율"^^xsd:string ;
+    cla:description "영업규모 대비 운전자본 여유" ;
+    cla:hasFormula cla:Formula_netWorkingCapitalRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "순운전자본비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_nonCurrentAssets a cla:Metric ;
+    skos:altLabel "Non-Current Assets"^^xsd:string ;
+    skos:prefLabel "비유동자산"^^xsd:string ;
+    cla:description "투자 구조의 성격" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "비유동자산" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_nonCurrentLiabilities a cla:Metric ;
+    skos:altLabel "Non-Current Liabilities"^^xsd:string ;
+    skos:prefLabel "비유동부채"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "비유동부채" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_nonOperatingExpenses a cla:Metric ;
+    skos:altLabel "Non-Operating Expenses"^^xsd:string ;
+    skos:prefLabel "영업외비용"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "영업외비용" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_nonOperatingIncome a cla:Metric ;
+    skos:altLabel "Non-Operating Income"^^xsd:string ;
+    skos:prefLabel "영업외수익"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "영업외수익" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_operatingCashFlow a cla:Metric ;
+    skos:altLabel "Operating Cash Flow"^^xsd:string ;
+    skos:prefLabel "영업활동현금흐름"^^xsd:string ;
+    cla:description "본업 현금창출력" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "영업활동현금흐름" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_operatingIncome a cla:Metric ;
+    skos:altLabel "Operating Income"^^xsd:string ;
+    skos:prefLabel "영업이익"^^xsd:string ;
+    cla:description "영업이익은 양호하지만 EBITDA와의 차이가 크면 감가상각비 등 비현금성비용 영향이 크다는 뜻일 수 있고, 당기순이익이 더 약하다면 금융비용이나 비영업손실 부담이 크다고 해석할 수 있다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "영업이익" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_operatingIncomeToRevenueRatio a cla:Metric ;
+    skos:altLabel "Operating Income to Revenue Ratio"^^xsd:string ;
+    skos:prefLabel "매출액영업이익율"^^xsd:string ;
+    cla:description "매출액영업이익율이 하락할 때 매출원가율 상승과 판관비 증가가 함께 나타난다면, 이는 원가와 비용 부담이 동시에 확대되어 운영효율이 전반적으로 저하되고 있음을 시사한다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출액영업이익율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_operatingProfitMargin a cla:Metric ;
+    skos:altLabel "Operating Profit Margin"^^xsd:string ;
+    skos:prefLabel "영업이익률"^^xsd:string ;
+    cla:description "영업활동 효율성" ;
+    cla:hasFormula cla:Formula_operatingProfitMargin ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "영업이익률" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_principalAndInterestRepayment a cla:Metric ;
+    skos:altLabel "Principal and Interest Repayment"^^xsd:string ;
+    skos:prefLabel "원리금상환액"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "원리금상환액" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_receivablesAssignmentAmount a cla:Metric ;
+    skos:altLabel "Receivables Assignment Amount"^^xsd:string ;
+    skos:prefLabel "매출채권양도액등"^^xsd:string ;
+    cla:description "매출채권 유동화 규모 지표" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출채권양도액등" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_retainedEarningsEtc a cla:Metric ;
+    skos:altLabel "Retained Earnings etc."^^xsd:string ;
+    skos:prefLabel "잉여금등"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "잉여금등" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_revenue a cla:Metric ;
+    skos:altLabel "Revenue"^^xsd:string ;
+    skos:prefLabel "매출액"^^xsd:string ;
+    cla:description "매출액이 증가하더라도 매출원가율이나 판관비 부담이 함께 높아지면 영업이익과 매출액영업이익율은 오히려 하락할 수 있어, 외형 성장만으로 수익성 개선을 판단하기는 어렵다." ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출액" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_revenueGrowthRate a cla:Metric ;
+    skos:altLabel "Revenue Growth Rate"^^xsd:string ;
+    skos:prefLabel "매출액증가율"^^xsd:string ;
+    cla:description "성장 추세" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출액증가율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_revenueOrdinaryIncomeRatio a cla:Metric ;
+    skos:altLabel "Revenue Ordinary Income Ratio"^^xsd:string ;
+    skos:prefLabel "매출액경상이익율"^^xsd:string ;
+    cla:description "영업+재무활동 성과" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "매출액경상이익율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_roa a cla:Metric ;
+    skos:altLabel "ROA"^^xsd:string ;
+    skos:prefLabel "ROA"^^xsd:string ;
+    cla:description "자산 전체의 수익성" ;
+    cla:hasFormula cla:Formula_roa ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "ROA" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_roe a cla:Metric ;
+    skos:altLabel "ROE"^^xsd:string ;
+    skos:prefLabel "ROE"^^xsd:string ;
+    cla:description "자기자본 수익성" ;
+    cla:hasFormula cla:Formula_roe ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "ROE" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_sellingGeneralAdminExpenses a cla:Metric ;
+    skos:altLabel "Selling General and Administrative Expenses"^^xsd:string ;
+    skos:prefLabel "판매비와관리비"^^xsd:string ;
+    cla:description "기업이 해당 기간동안 소비한 판매 및 관리를 위한 비용으로 이익 감소의 요인" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "판매비와관리비" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_sgnaRatio a cla:Metric ;
+    skos:altLabel "SG&A Ratio"^^xsd:string ;
+    skos:prefLabel "판매비와관리비율"^^xsd:string ;
+    cla:description "비용통제력 판단" ;
+    cla:hasFormula cla:Formula_sgnaRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "판매비와관리비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_tangibleAssets a cla:Metric ;
+    skos:altLabel "Tangible Assets"^^xsd:string ;
+    skos:prefLabel "유형자산"^^xsd:string ;
+    cla:description "투자 구조의 성격" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "유형자산" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_tangibleAssetsRatio a cla:Metric ;
+    skos:altLabel "Tangible Assets Ratio"^^xsd:string ;
+    skos:prefLabel "유형자산비율"^^xsd:string ;
+    cla:description "자산 구조의 고정성 판단" ;
+    cla:hasFormula cla:Formula_tangibleAssetsRatio ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "유형자산비율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_tangibleNetWorth a cla:Metric ;
+    skos:altLabel "Tangible Net Worth"^^xsd:string ;
+    skos:prefLabel "Tangible Net Worth"^^xsd:string ;
+    cla:description "유형자산 가치 파악" ;
+    cla:hasFormula cla:Formula_tangibleNetWorth ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "Tangible Net Worth" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_totalAssetTurnover a cla:Metric ;
+    skos:altLabel "Total Asset Turnover"^^xsd:string ;
+    skos:prefLabel "총자산회전율"^^xsd:string ;
+    cla:description "자산활용 효율" ;
+    cla:hasFormula cla:Formula_totalAssetTurnover ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "총자산회전율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_totalAssets a cla:Metric ;
+    skos:altLabel "Total Assets"^^xsd:string ;
+    skos:prefLabel "자산총계"^^xsd:string ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "자산총계" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_totalAssetsGrowthRate a cla:Metric ;
+    skos:altLabel "Total Assets Growth Rate"^^xsd:string ;
+    skos:prefLabel "총자산증가율"^^xsd:string ;
+    cla:description "성장성 추이" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "총자산증가율" ;
+    cla:metricValueType cla:VT_ratio ;
+    cla:unit cla:UI_percent .
+
+cla:Metric_totalBorrowings a cla:Metric ;
+    skos:altLabel "Total Borrowings"^^xsd:string ;
+    skos:prefLabel "총차입금"^^xsd:string ;
+    cla:description "전체 금융부채 규모" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_7e4f12729ee2 ;
+    cla:isInputMetric true ;
+    cla:metricId "총차입금" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_totalCashDeposits a cla:Metric ;
+    skos:altLabel "Total Cash Deposits"^^xsd:string ;
+    skos:prefLabel "총현금예금"^^xsd:string ;
+    cla:description "단기 지급능력 및 유동성 수준을 판단" ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric true ;
+    cla:metricId "총현금예금" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_totalDebt a cla:Metric ;
+    skos:altLabel "Total Debt"^^xsd:string ;
+    skos:prefLabel "부채총계"^^xsd:string ;
+    cla:description "부채 총액" ;
+    cla:hasFormula cla:Formula_totalDebt ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "부채총계" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_totalEquity a cla:Metric ;
+    skos:altLabel "Total Equity"^^xsd:string ;
+    skos:prefLabel "자본총계"^^xsd:string ;
+    cla:description "자본 총액" ;
+    cla:hasFormula cla:Formula_totalEquity ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "자본총계" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:Metric_workingCapital a cla:Metric ;
+    skos:altLabel "Working Capital"^^xsd:string ;
+    skos:prefLabel "운전자본"^^xsd:string ;
+    cla:description "단기운영 여력" ;
+    cla:hasFormula cla:Formula_workingCapital ;
+    cla:hasTriggerPolicy cla:TriggerPolicy_570c34426cf9 ;
+    cla:isInputMetric false ;
+    cla:metricId "운전자본" ;
+    cla:metricValueType cla:VT_amount ;
+    cla:unit cla:UI_m_krw .
+
+cla:PCAR_amount a cla:PeriodChangeAutoRule ;
+    cla:appliesToValueType cla:VT_amount ;
+    cla:autoThresholdValue 10.0 ;
+    cla:resolvedChangeMeasure cla:CM_relative_percent .
+
+cla:PCAR_days a cla:PeriodChangeAutoRule ;
+    cla:appliesToValueType cla:VT_days ;
+    cla:autoThresholdValue 30.0 ;
+    cla:resolvedChangeMeasure cla:CM_absolute .
+
+cla:PCAR_default a cla:PeriodChangeAutoRule ;
+    cla:autoThresholdValue 5.0 ;
+    cla:isFallbackAutoRule true ;
+    cla:resolvedChangeMeasure cla:CM_absolute_points .
+
+cla:PCAR_multiple a cla:PeriodChangeAutoRule ;
+    cla:appliesToValueType cla:VT_multiple ;
+    cla:autoThresholdValue 0.5 ;
+    cla:resolvedChangeMeasure cla:CM_absolute .
+
+cla:PCAR_ratio a cla:PeriodChangeAutoRule ;
+    cla:appliesToValueType cla:VT_ratio ;
+    cla:autoThresholdValue 5.0 ;
+    cla:resolvedChangeMeasure cla:CM_absolute_points .
+
+cla:PeriodChangeAutoPolicy_default a cla:PeriodChangeAutoPolicy ;
+    cla:hasAutoResolutionRule cla:PCAR_amount,
+        cla:PCAR_days,
+        cla:PCAR_multiple,
+        cla:PCAR_ratio ;
+    cla:hasFallbackAutoResolutionRule cla:PCAR_default .
+
+cla:TriggerPolicy_570c34426cf9 a cla:TriggerPolicy ;
+    cla:combineOperator cla:any ;
+    cla:hasTriggerCondition cla:TriggerPolicy_570c34426cf9_TC_0,
+        cla:TriggerPolicy_570c34426cf9_TC_1 ;
+    cla:isSharedPolicy true ;
+    cla:policyKey "570c34426cf9" ;
+    cla:triggerMode cla:TM_when_triggered .
+
+cla:TriggerPolicy_570c34426cf9_TC_0 a cla:TriggerCondition ;
+    cla:changeMeasure cla:CM_auto ;
+    cla:conditionType cla:CT_period_change_threshold .
+
+cla:TriggerPolicy_570c34426cf9_TC_1 a cla:TriggerCondition ;
+    cla:conditionType cla:CT_sign_cross_zero .
+
+cla:TriggerPolicy_7e4f12729ee2 a cla:TriggerPolicy ;
+    cla:combineOperator cla:any ;
+    cla:hasTriggerCondition cla:TriggerPolicy_7e4f12729ee2_TC_0,
+        cla:TriggerPolicy_7e4f12729ee2_TC_1,
+        cla:TriggerPolicy_7e4f12729ee2_TC_2 ;
+    cla:isSharedPolicy true ;
+    cla:policyKey "7e4f12729ee2" ;
+    cla:triggerMode cla:TM_when_triggered .
+
+cla:TriggerPolicy_7e4f12729ee2_TC_0 a cla:TriggerCondition ;
+    cla:changeMeasure cla:CM_absolute ;
+    cla:conditionType cla:CT_period_change_threshold ;
+    cla:thresholdValue 500.0 .
+
+cla:TriggerPolicy_7e4f12729ee2_TC_1 a cla:TriggerCondition ;
+    cla:changeMeasure cla:CM_relative_percent ;
+    cla:conditionType cla:CT_period_change_threshold ;
+    cla:thresholdValue 10.0 .
+
+cla:TriggerPolicy_7e4f12729ee2_TC_2 a cla:TriggerCondition ;
+    cla:conditionType cla:CT_sign_cross_zero .
+
+cla:TriggerPolicy_99bce6d3a942 a cla:TriggerPolicy ;
+    cla:combineOperator cla:any ;
+    cla:hasTriggerCondition cla:TriggerPolicy_99bce6d3a942_TC_0,
+        cla:TriggerPolicy_99bce6d3a942_TC_1 ;
+    cla:policyKey "99bce6d3a942" ;
+    cla:triggerMode cla:TM_when_triggered .
+
+cla:TriggerPolicy_99bce6d3a942_TC_0 a cla:TriggerCondition ;
+    cla:changeMeasure cla:CM_absolute_points ;
+    cla:conditionType cla:CT_period_change_threshold ;
+    cla:thresholdValue 3.0 .
+
+cla:TriggerPolicy_99bce6d3a942_TC_1 a cla:TriggerCondition ;
+    cla:conditionType cla:CT_sign_cross_zero .
+
