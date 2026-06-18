@@ -80,6 +80,19 @@ company_overview:
   use_available_data: true
   corpus_presets: 
     - required_input
+    - required_input_cl
+    - required_input_cr
+  parser: core_mapped
+  parser_config:
+    nested_format: markdown_table
+    include_keys:
+      - custNm
+      - rscoRegNo
+      - MMO0002
+      - MMO0006
+      - MMO0003
+      - MMO0847
+      - MMO0848
   requirements: |
     ## 0. 필드 스키마(추출 대상)
     아래 필드를 참고 문서 및 참고 데이터에서 추출하라. 값이 없으면 NULL로 둘 것.
@@ -175,9 +188,14 @@ credit_main:
   required: true
   use_for_opinion: true
   base_keywords: []
-  corpus_presets: 
+  corpus_presets:
     - required_input
-  requirements: |
+    - required_input_cl
+  requirements: ''
+  parser: credit_main
+  parser_config: {}
+  # TODO(P6): 상세 파싱 구현 시 아래 _requirements_spec 참조 (LLM 경로 미사용)
+  _requirements_spec: |
     ## 산출물 구조(고정)
     - 반드시 아래 두 문단을 순서대로 구분하여 출력
       1) 1문단: 여신 기본 문장(줄글)
@@ -608,6 +626,19 @@ company_overview2:
     - 설립, 주요사업, 본사소재지
   corpus_presets: 
     - required_input
+    - required_input_cl
+    - required_input_cr
+  parser: core_mapped
+  parser_config:
+    nested_format: markdown_table
+    include_keys:
+      - custNm
+      - rscoRegNo
+      - MMO0002
+      - MMO0006
+      - MMO0003
+      - MMO0847
+      - MMO0848
   requirements: |
     ## 산출물 구조(고정)
     - 아래 행제목(고정)을 행으로 갖는 markdown table 1개 작성
@@ -653,6 +684,17 @@ stockholders:
     - 주주구성
   corpus_presets:
     - required_input
+    - required_input_cr
+  parser: core_mapped
+  parser_config:
+    nested_format: markdown_table
+    include_keys:
+      - MMO0009
+      - MMO0010
+      - MMO0011
+      - MMO0012
+      - MMO0013
+      - MMO0014
   requirements: |
     ## 산출물 구조(고정)
     - 구분, 주주명, 주식수, 지분율, 자본금, 비고 등을 정리하여 markdown table 작성
