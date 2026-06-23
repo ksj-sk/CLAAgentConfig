@@ -23,7 +23,7 @@ fields:
 # 중첩 컬렉션
 collections:
   registGrids:
-    label: "여신신청내역"
+    label: "여신신청내역 (금액단위: 원, 달러, 그 외 기본)"
     item_label: "신청건"
     fields:
       prdKornNm: "상품 한글명"
@@ -40,7 +40,7 @@ collections:
       expiRpayAmt: "만기상환 금액"
       cphsLimDvNm: "포괄한도 구분명"
   exposurePtcls:
-    label: "여신노출내역"
+    label: "여신노출내역 (금액단위: 백만원, 천미불, 그 외 기본본)"
     item_label: "노출건"
     fields:
       prdNm: "상품명"
