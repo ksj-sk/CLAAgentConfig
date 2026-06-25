@@ -84,25 +84,19 @@ cla:AnalyticalView
 .
 cla:CM_absolute
   a skos:Concept ;
-  skos:inScheme cla:ChangeMeasure ;
+  skos:inScheme cla:ExplicitChangeMeasure ;
   skos:notation "absolute" ;
   skos:prefLabel "절대"@ko ;
 .
 cla:CM_absolute_points
   a skos:Concept ;
-  skos:inScheme cla:ChangeMeasure ;
+  skos:inScheme cla:ExplicitChangeMeasure ;
   skos:notation "absolute_points" ;
   skos:prefLabel "퍼센트포인트"@ko ;
 .
-cla:CM_auto
-  a skos:Concept ;
-  skos:inScheme cla:ChangeMeasure ;
-  skos:notation "auto" ;
-  skos:prefLabel "자동(지표 value_type 기준)"@ko ;
-.
 cla:CM_relative_percent
   a skos:Concept ;
-  skos:inScheme cla:ChangeMeasure ;
+  skos:inScheme cla:ExplicitChangeMeasure ;
   skos:notation "relative_percent" ;
   skos:prefLabel "상대 퍼센트"@ko ;
 .
@@ -146,7 +140,8 @@ cla:CT_sign_cross_zero
 .
 cla:ChangeMeasure
   a skos:ConceptScheme ;
-  skos:prefLabel "기간 변화 측정 방식"@ko ;
+  skos:editorialNote "Deprecated: ExplicitChangeMeasure·DefaultThresholdMode로 분리. 하위 호환 문서용."@ko ;
+  skos:prefLabel "기간 변화 측정 방식(구)"@ko ;
 .
 cla:CombineOperator
   a skos:ConceptScheme ;
@@ -208,6 +203,34 @@ cla:ConditionType
   a skos:ConceptScheme ;
   skos:editorialNote "YAML conditions[].type은 skos:notation으로 매핑(v0.8.5: period_change_threshold, sign_cross_zero, industry_vs_company 3종). 구 notation(change_rate_threshold 등)은 TBox·빌드에서 거부. 미사용 Concept(CT_decrease_rate_threshold 등)은 SHACL/빌드 검증 대상에서 제외 권장." ;
   skos:prefLabel "조건유형"@ko ;
+.
+cla:DTM_absolute
+  a skos:Concept ;
+  skos:inScheme cla:DefaultThresholdMode ;
+  skos:notation "absolute" ;
+  skos:prefLabel "절대차(기본 테이블)"@ko ;
+.
+cla:DTM_auto
+  a skos:Concept ;
+  skos:inScheme cla:DefaultThresholdMode ;
+  skos:notation "auto" ;
+  skos:prefLabel "자동(지표 value_type 기준)"@ko ;
+.
+cla:DTM_relative_percent
+  a skos:Concept ;
+  skos:inScheme cla:DefaultThresholdMode ;
+  skos:notation "relative_percent" ;
+  skos:prefLabel "상대 퍼센트(기본 테이블)"@ko ;
+.
+cla:DefaultThresholdMode
+  a skos:ConceptScheme ;
+  skos:definition "_defaults.triggers.defaultThresholdMode 전용. period_change_thresholds 테이블 해석 모드."@ko ;
+  skos:prefLabel "기본 임계값 모드"@ko ;
+.
+cla:ExplicitChangeMeasure
+  a skos:ConceptScheme ;
+  skos:definition "지표별 triggers.conditions[].measure 전용 명시 측정 방식."@ko ;
+  skos:prefLabel "명시 기간 변화 측정"@ko ;
 .
 cla:Formula
   a owl:Class ;
@@ -357,26 +380,28 @@ cla:Metric
     ] ;
   sh:sparql [
       a sh:SPARQLConstraint ;
-      sh:message "measure:auto policy requires metricValueType on Metric"@ko ;
+      sh:message "defaultThresholdMode=auto policy requires metricValueType on Metric"@ko ;
       sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
       sh:select """SELECT $this WHERE {
   FILTER (
     EXISTS {
       $this cla:hasTriggerPolicy ?tp .
-      ?tp cla:hasTriggerCondition ?tc .
+      ?tp cla:isDefaultTriggerPolicy true ;
+           cla:defaultThresholdMode cla:DTM_auto ;
+           cla:hasTriggerCondition ?tc .
       ?tc cla:conditionType cla:CT_period_change_threshold .
-      OPTIONAL { ?tc cla:changeMeasure ?cm }
       OPTIONAL { ?tc cla:thresholdValue ?tv }
-      FILTER ( !BOUND(?tv) && (!BOUND(?cm) || ?cm = cla:CM_auto) )
+      FILTER ( !BOUND(?tv) )
     } ||
     EXISTS {
       ?cig cla:hasActivationMetric $this ;
            cla:hasTriggerPolicy ?tp .
-      ?tp cla:hasTriggerCondition ?tc .
+      ?tp cla:isDefaultTriggerPolicy true ;
+           cla:defaultThresholdMode cla:DTM_auto ;
+           cla:hasTriggerCondition ?tc .
       ?tc cla:conditionType cla:CT_period_change_threshold .
-      OPTIONAL { ?tc cla:changeMeasure ?cm }
       OPTIONAL { ?tc cla:thresholdValue ?tv }
-      FILTER ( !BOUND(?tv) && (!BOUND(?cm) || ?cm = cla:CM_auto) )
+      FILTER ( !BOUND(?tv) )
     }
   )
   FILTER NOT EXISTS { $this cla:metricValueType ?vt }
@@ -387,38 +412,38 @@ cla:MetricCategory
   a skos:ConceptScheme ;
   skos:prefLabel "지표의 분류 유형"@ko ;
 .
-cla:PeriodChangeAutoPolicy
+cla:PeriodChangeThresholdPolicy
   a owl:Class ;
   a sh:NodeShape ;
   rdfs:subClassOf owl:Thing ;
-  skos:definition "period_change_threshold + measure:auto 해석 규칙 테이블. YAML _defaults.period_change_thresholds materialize 대상."@ko ;
-  skos:prefLabel "기간 변화 auto 해석 정책"@ko ;
+  skos:definition "_defaults.period_change_thresholds value_type별 임계값 테이블. DTM_auto/absolute/relative_percent 및 measure:auto 해석에 공통 사용."@ko ;
+  skos:prefLabel "기간 변화 기본 임계값 정책"@ko ;
   sh:property [
       a sh:PropertyShape ;
-      sh:path cla:hasAutoResolutionRule ;
-      sh:class cla:PeriodChangeAutoRule ;
-      sh:minCount 4 ;
-      sh:name "value_type별 auto 해석 규칙" ;
+      sh:path cla:hasFallbackThresholdRule ;
+      sh:class cla:PeriodChangeThresholdRule ;
+      sh:maxCount 1 ;
+      sh:minCount 1 ;
+      sh:name "폴백 임계값 규칙" ;
       sh:nodeKind sh:IRI ;
     ] ;
   sh:property [
       a sh:PropertyShape ;
-      sh:path cla:hasFallbackAutoResolutionRule ;
-      sh:class cla:PeriodChangeAutoRule ;
-      sh:maxCount 1 ;
-      sh:minCount 1 ;
-      sh:name "폴백 auto 해석 규칙" ;
+      sh:path cla:hasValueTypeThresholdRule ;
+      sh:class cla:PeriodChangeThresholdRule ;
+      sh:minCount 4 ;
+      sh:name "value_type별 임계값 규칙" ;
       sh:nodeKind sh:IRI ;
     ] ;
   sh:sparql [
       a sh:SPARQLConstraint ;
-      sh:message "each ValueType must have exactly one PeriodChangeAutoRule in the policy (D-8)"@ko ;
+      sh:message "each ValueType must have exactly one PeriodChangeThresholdRule in the policy (D-8)"@ko ;
       sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
       sh:select """SELECT $this WHERE {
   ?vt skos:inScheme cla:ValueType .
   {
     SELECT (COUNT(?rule) AS ?cnt) WHERE {
-      $this cla:hasAutoResolutionRule ?rule .
+      $this cla:hasValueTypeThresholdRule ?rule .
       ?rule cla:appliesToValueType ?vt .
     }
   }
@@ -426,27 +451,27 @@ cla:PeriodChangeAutoPolicy
 }""" ;
     ] ;
 .
-cla:PeriodChangeAutoPolicySingletonShape
+cla:PeriodChangeThresholdPolicySingletonShape
   a sh:NodeShape ;
   sh:sparql [
       a sh:SPARQLConstraint ;
-      sh:message "exactly one PeriodChangeAutoPolicy must exist in the data graph" ;
+      sh:message "exactly one PeriodChangeThresholdPolicy must exist in the data graph" ;
       sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
       sh:select """SELECT $this WHERE {
   {
-    SELECT (COUNT(?p) AS ?cnt) WHERE { ?p a cla:PeriodChangeAutoPolicy }
+    SELECT (COUNT(?p) AS ?cnt) WHERE { ?p a cla:PeriodChangeThresholdPolicy }
   }
   FILTER (?cnt != 1)
 }""" ;
     ] ;
-  sh:targetClass cla:PeriodChangeAutoPolicy ;
+  sh:targetClass cla:PeriodChangeThresholdPolicy ;
 .
-cla:PeriodChangeAutoRule
+cla:PeriodChangeThresholdRule
   a owl:Class ;
   a sh:NodeShape ;
   rdfs:subClassOf owl:Thing ;
-  skos:definition "measure:auto 시 value_type별 실제 ChangeMeasure·threshold 해석 규칙"@ko ;
-  skos:prefLabel "기간 변화 auto 해석 규칙"@ko ;
+  skos:definition "value_type 슬롯별 임계값 및(DTM_auto 시) resolvedChangeMeasure 해석 규칙"@ko ;
+  skos:prefLabel "기간 변화 임계값 규칙"@ko ;
   sh:property [
       a sh:PropertyShape ;
       sh:path cla:appliesToValueType ;
@@ -464,18 +489,18 @@ cla:PeriodChangeAutoRule
     ] ;
   sh:property [
       a sh:PropertyShape ;
-      sh:path cla:autoThresholdValue ;
-      sh:datatype xsd:decimal ;
-      sh:maxCount 1 ;
-      sh:minCount 1 ;
-      sh:name "auto 임계값" ;
-    ] ;
-  sh:property [
-      a sh:PropertyShape ;
-      sh:path cla:isFallbackAutoRule ;
+      sh:path cla:isFallbackThresholdRule ;
       sh:datatype xsd:boolean ;
       sh:maxCount 1 ;
       sh:name "폴백 규칙 여부" ;
+    ] ;
+  sh:property [
+      a sh:PropertyShape ;
+      sh:path cla:periodChangeThreshold ;
+      sh:datatype xsd:decimal ;
+      sh:maxCount 1 ;
+      sh:minCount 1 ;
+      sh:name "기간 변화 임계값" ;
     ] ;
   sh:property [
       a sh:PropertyShape ;
@@ -488,7 +513,7 @@ cla:PeriodChangeAutoRule
           a sh:NodeShape ;
           sh:property [
               sh:path skos:inScheme ;
-              sh:hasValue cla:ChangeMeasure ;
+              sh:hasValue cla:ExplicitChangeMeasure ;
             ] ;
         ] ;
       sh:nodeKind sh:IRI ;
@@ -498,7 +523,7 @@ cla:PeriodChangeAutoRule
       sh:message "non-fallback rule must have appliesToValueType; fallback rule must not (D-9)"@ko ;
       sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
       sh:select """SELECT $this WHERE {
-  OPTIONAL { $this cla:isFallbackAutoRule ?fb }
+  OPTIONAL { $this cla:isFallbackThresholdRule ?fb }
   FILTER (
     (BOUND(?fb) && ?fb = true && EXISTS { $this cla:appliesToValueType ?vt }) ||
     ((!BOUND(?fb) || ?fb != true) && NOT EXISTS { $this cla:appliesToValueType ?vt })
@@ -523,7 +548,7 @@ cla:TriggerCondition
   a sh:NodeShape ;
   rdfs:subClassOf owl:Thing ;
   skos:altLabel "trigger condition"@en ;
-  skos:editorialNote "조건 평가 대상 지표는 TriggerCondition에 두지 않음. Metric→hasTriggerPolicy 또는 CIG→hasActivationMetric 경로로 연결된 지표의 시계열·업계값을 엔진이 사용. measure 생략 시 CM_auto materialize." ;
+  skos:editorialNote "조건 평가 대상 지표는 TriggerCondition에 두지 않음. Metric→hasTriggerPolicy 또는 CIG→hasActivationMetric 경로로 연결된 지표의 시계열·업계값을 엔진이 사용. default policy의 period_change는 changeMeasure 없음(TriggerPolicy.defaultThresholdMode). 지표별 period_change는 changeMeasure(ExplicitChangeMeasure) 필수." ;
   skos:prefLabel "트리거 조건"@ko ;
   sh:property [
       a sh:PropertyShape ;
@@ -543,7 +568,7 @@ cla:TriggerCondition
           a sh:NodeShape ;
           sh:property [
               sh:path skos:inScheme ;
-              sh:hasValue cla:ChangeMeasure ;
+              sh:hasValue cla:ExplicitChangeMeasure ;
             ] ;
         ] ;
       sh:nodeKind sh:IRI ;
@@ -598,6 +623,28 @@ cla:TriggerCondition
     ] ;
   sh:sparql [
       a sh:SPARQLConstraint ;
+      sh:message "default policy period_change_threshold must not have changeMeasure"@ko ;
+      sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
+      sh:select """SELECT $this WHERE {
+  $this cla:conditionType cla:CT_period_change_threshold .
+  $this cla:changeMeasure ?cm .
+  ?tp cla:hasTriggerCondition $this ;
+      cla:isDefaultTriggerPolicy true .
+}""" ;
+    ] ;
+  sh:sparql [
+      a sh:SPARQLConstraint ;
+      sh:message "default policy period_change_threshold must not have thresholdValue"@ko ;
+      sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
+      sh:select """SELECT $this WHERE {
+  $this cla:conditionType cla:CT_period_change_threshold .
+  $this cla:thresholdValue ?tv .
+  ?tp cla:hasTriggerCondition $this ;
+      cla:isDefaultTriggerPolicy true .
+}""" ;
+    ] ;
+  sh:sparql [
+      a sh:SPARQLConstraint ;
       sh:message "industryComparison only for industry_vs_company" ;
       sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
       sh:select """SELECT $this WHERE {
@@ -625,23 +672,29 @@ cla:TriggerCondition
     ] ;
   sh:sparql [
       a sh:SPARQLConstraint ;
-      sh:message "period_change_threshold with thresholdValue requires changeMeasure (abnormal RDF)" ;
+      sh:message "non-default period_change_threshold requires changeMeasure"@ko ;
+      sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
+      sh:select """SELECT $this WHERE {
+  $this cla:conditionType cla:CT_period_change_threshold .
+  FILTER NOT EXISTS { $this cla:changeMeasure ?cm }
+  FILTER NOT EXISTS {
+    ?tp cla:hasTriggerCondition $this ;
+        cla:isDefaultTriggerPolicy true .
+  }
+}""" ;
+    ] ;
+  sh:sparql [
+      a sh:SPARQLConstraint ;
+      sh:message "period_change_threshold with thresholdValue requires changeMeasure on non-default policy"@ko ;
       sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
       sh:select """SELECT $this WHERE {
   $this cla:conditionType cla:CT_period_change_threshold .
   $this cla:thresholdValue ?tv .
   FILTER NOT EXISTS { $this cla:changeMeasure ?cm }
-}""" ;
-    ] ;
-  sh:sparql [
-      a sh:SPARQLConstraint ;
-      sh:message "period_change_threshold: CM_auto and thresholdValue are mutually exclusive" ;
-      sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
-      sh:select """SELECT $this WHERE {
-  $this cla:conditionType cla:CT_period_change_threshold .
-  $this cla:thresholdValue ?tv .
-  OPTIONAL { $this cla:changeMeasure ?cm }
-  FILTER ( !BOUND(?cm) || ?cm = cla:CM_auto )
+  FILTER NOT EXISTS {
+    ?tp cla:hasTriggerCondition $this ;
+        cla:isDefaultTriggerPolicy true .
+  }
 }""" ;
     ] ;
   sh:sparql [
@@ -706,10 +759,32 @@ cla:TriggerPolicy
     ] ;
   sh:property [
       a sh:PropertyShape ;
+      sh:path cla:defaultThresholdMode ;
+      sh:class skos:Concept ;
+      sh:maxCount 1 ;
+      sh:name "기본 임계값 모드" ;
+      sh:node [
+          a sh:NodeShape ;
+          sh:property [
+              sh:path skos:inScheme ;
+              sh:hasValue cla:DefaultThresholdMode ;
+            ] ;
+        ] ;
+      sh:nodeKind sh:IRI ;
+    ] ;
+  sh:property [
+      a sh:PropertyShape ;
       sh:path cla:hasTriggerCondition ;
       sh:class cla:TriggerCondition ;
       sh:name "할당 트리거 조건" ;
       sh:nodeKind sh:IRI ;
+    ] ;
+  sh:property [
+      a sh:PropertyShape ;
+      sh:path cla:isDefaultTriggerPolicy ;
+      sh:datatype xsd:boolean ;
+      sh:maxCount 1 ;
+      sh:name "기본 트리거 정책 여부" ;
     ] ;
   sh:property [
       a sh:PropertyShape ;
@@ -748,6 +823,26 @@ cla:TriggerPolicy
       sh:select """SELECT $this WHERE {
   $this cla:triggerMode cla:TM_always .
   $this cla:hasTriggerCondition ?c .
+}""" ;
+    ] ;
+  sh:sparql [
+      a sh:SPARQLConstraint ;
+      sh:message "default TriggerPolicy requires defaultThresholdMode when period_change present"@ko ;
+      sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
+      sh:select """SELECT $this WHERE {
+  $this cla:isDefaultTriggerPolicy true .
+  ?tc cla:conditionType cla:CT_period_change_threshold .
+  $this cla:hasTriggerCondition ?tc .
+  FILTER NOT EXISTS { $this cla:defaultThresholdMode ?dtm }
+}""" ;
+    ] ;
+  sh:sparql [
+      a sh:SPARQLConstraint ;
+      sh:message "defaultThresholdMode only allowed on default TriggerPolicy"@ko ;
+      sh:prefixes <https://hit.hanati.co.kr/ontology/cla> ;
+      sh:select """SELECT $this WHERE {
+  $this cla:defaultThresholdMode ?dtm .
+  FILTER NOT EXISTS { $this cla:isDefaultTriggerPolicy true }
 }""" ;
     ] ;
   sh:sparql [
@@ -898,7 +993,7 @@ cla:VT_ratio
 .
 cla:ValueType
   a skos:ConceptScheme ;
-  skos:editorialNote "YAML metrics[*].value_type. measure:auto 해석은 PeriodChangeAutoRule.appliesToValueType으로 연결."@ko ;
+  skos:editorialNote "YAML metrics[*].value_type. DTM_auto 시 PeriodChangeThresholdRule.appliesToValueType으로 연결."@ko ;
   skos:prefLabel "지표 값 유형"@ko ;
 .
 cla:ViewRole
@@ -922,20 +1017,15 @@ cla:any
 .
 cla:appliesToValueType
   a owl:ObjectProperty ;
-  rdfs:domain cla:PeriodChangeAutoRule ;
+  rdfs:domain cla:PeriodChangeThresholdRule ;
   rdfs:range skos:Concept ;
-  skos:definition "measure:auto 시 이 규칙이 적용되는 ValueType Concept"@ko ;
-.
-cla:autoThresholdValue
-  a owl:DatatypeProperty ;
-  rdfs:domain cla:PeriodChangeAutoRule ;
-  rdfs:range xsd:decimal ;
-  skos:definition "measure:auto 해석 시 사용할 임계값"@ko ;
+  skos:definition "value_type 슬롯 식별. DTM_auto 시 이 규칙이 적용됨."@ko ;
 .
 cla:changeMeasure
   a owl:ObjectProperty ;
   rdfs:domain cla:TriggerCondition ;
   rdfs:range skos:Concept ;
+  skos:definition "지표별 명시 기간 변화 측정(ExplicitChangeMeasure). default policy 조건에는 사용하지 않음."@ko ;
   skos:prefLabel "기간 변화 측정"@ko ;
 .
 cla:combineOperator
@@ -949,6 +1039,13 @@ cla:conditionType
   rdfs:domain cla:TriggerCondition ;
   rdfs:range skos:Concept ;
   skos:prefLabel "조건 유형"@ko ;
+.
+cla:defaultThresholdMode
+  a owl:ObjectProperty ;
+  rdfs:domain cla:TriggerPolicy ;
+  rdfs:range skos:Concept ;
+  skos:definition "_defaults.triggers 전용. period_change_thresholds 테이블 해석 모드(auto|absolute|relative_percent)."@ko ;
+  skos:prefLabel "기본 임계값 모드"@ko ;
 .
 cla:description
   a owl:DatatypeProperty ;
@@ -982,17 +1079,11 @@ cla:hasActivationMetric
   rdfs:subPropertyOf cla:hasGroupMetric ;
   skos:prefLabel "복합 해석 대표 지표"@ko ;
 .
-cla:hasAutoResolutionRule
+cla:hasFallbackThresholdRule
   a owl:ObjectProperty ;
-  rdfs:domain cla:PeriodChangeAutoPolicy ;
-  rdfs:range cla:PeriodChangeAutoRule ;
-  skos:prefLabel "value_type별 auto 해석 규칙"@ko ;
-.
-cla:hasFallbackAutoResolutionRule
-  a owl:ObjectProperty ;
-  rdfs:domain cla:PeriodChangeAutoPolicy ;
-  rdfs:range cla:PeriodChangeAutoRule ;
-  skos:prefLabel "폴백 auto 해석 규칙"@ko ;
+  rdfs:domain cla:PeriodChangeThresholdPolicy ;
+  rdfs:range cla:PeriodChangeThresholdRule ;
+  skos:prefLabel "폴백 임계값 규칙"@ko ;
 .
 cla:hasFormula
   a owl:ObjectProperty ;
@@ -1056,6 +1147,12 @@ cla:hasTriggerPolicy
   rdfs:range cla:TriggerPolicy ;
   skos:prefLabel "트리거 정책"@ko ;
 .
+cla:hasValueTypeThresholdRule
+  a owl:ObjectProperty ;
+  rdfs:domain cla:PeriodChangeThresholdPolicy ;
+  rdfs:range cla:PeriodChangeThresholdRule ;
+  skos:prefLabel "value_type별 임계값 규칙"@ko ;
+.
 cla:includesMetric
   a owl:ObjectProperty ;
   rdfs:domain cla:CompositeInterpretationGroup ;
@@ -1069,6 +1166,13 @@ cla:industryComparison
   rdfs:range skos:Concept ;
   skos:prefLabel "업계 비교 방식"@ko ;
 .
+cla:isDefaultTriggerPolicy
+  a owl:DatatypeProperty ;
+  rdfs:domain cla:TriggerPolicy ;
+  rdfs:range xsd:boolean ;
+  skos:definition "_defaults.triggers에서 materialize된 TriggerPolicy 표식."@ko ;
+  skos:prefLabel "기본 트리거 정책 여부"@ko ;
+.
 cla:isEnabled
   a owl:DatatypeProperty ;
   rdfs:domain cla:CompositeInterpretationGroup ;
@@ -1076,11 +1180,11 @@ cla:isEnabled
   skos:definition "false이면 복합 해석 그룹을 런타임에서 비활성 처리. YAML enabled 생략 시 true로 materialize." ;
   skos:prefLabel "활성 여부"@ko ;
 .
-cla:isFallbackAutoRule
+cla:isFallbackThresholdRule
   a owl:DatatypeProperty ;
-  rdfs:domain cla:PeriodChangeAutoRule ;
+  rdfs:domain cla:PeriodChangeThresholdRule ;
   rdfs:range xsd:boolean ;
-  skos:definition "metricValueType 없을 때 사용하는 폴백 auto 해석 규칙"@ko ;
+  skos:definition "metricValueType 없을 때 사용하는 폴백 임계값 규칙"@ko ;
 .
 cla:isInputMetric
   a owl:DatatypeProperty ;
@@ -1135,6 +1239,12 @@ cla:metricValueType
   rdfs:range skos:Concept ;
   skos:prefLabel "지표 값 유형"@ko ;
 .
+cla:periodChangeThreshold
+  a owl:DatatypeProperty ;
+  rdfs:domain cla:PeriodChangeThresholdRule ;
+  rdfs:range xsd:decimal ;
+  skos:definition "period_change_thresholds 테이블의 value_type별 임계값"@ko ;
+.
 cla:policyKey
   a owl:DatatypeProperty ;
   rdfs:domain cla:TriggerPolicy ;
@@ -1144,9 +1254,9 @@ cla:policyKey
 .
 cla:resolvedChangeMeasure
   a owl:ObjectProperty ;
-  rdfs:domain cla:PeriodChangeAutoRule ;
+  rdfs:domain cla:PeriodChangeThresholdRule ;
   rdfs:range skos:Concept ;
-  skos:definition "measure:auto 시 실제 비교에 쓰는 ChangeMeasure"@ko ;
+  skos:definition "DTM_auto 시 실제 비교에 쓰는 ChangeMeasure"@ko ;
 .
 cla:sameGroupMetric
   a owl:SymmetricProperty ;
@@ -1165,7 +1275,7 @@ cla:thresholdValue
   a owl:DatatypeProperty ;
   rdfs:domain cla:TriggerCondition ;
   rdfs:range xsd:decimal ;
-  skos:editorialNote "conditionType별 필수 여부는 TriggerCondition NodeShape SHACL 참고. period_change+measure:auto 임계는 PeriodChangeAutoRule에서 엔진이 조회." ;
+  skos:editorialNote "conditionType별 필수 여부는 TriggerCondition NodeShape SHACL 참고. period_change 임계는 PeriodChangeThresholdRule에서 엔진이 조회." ;
   skos:prefLabel "임계값"@ko ;
 .
 cla:triggerMode
