@@ -250,7 +250,7 @@ presets:
 # Analytical View Service (YAML / KG backend)
 # ═══════════════════════════════════════════
 analytical_view_service:
-  backend: kg
+  backend: yaml
   hybrid: true
   backends:
     yaml:
