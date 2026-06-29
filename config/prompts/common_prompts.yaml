@@ -169,3 +169,76 @@ mode_determination_batch:
         ]
   description: "처리 모드 결정 프롬프트 (배치)"
 
+request_analysis_single:
+  variable_rules:
+    available_data_sources:
+      when_missing: "[]"
+    existing_has_content:
+      when_missing: "false"
+    existing_content:
+      when_missing: ""
+  messages:
+    - role: system
+      template: |
+        섹션 user_request의 코퍼스 적합성(feasibility_action)과 처리 모드(mode)를 판단하세요.
+        마크다운·설명 없이 아래 JSON 객체 하나만 반환하세요.
+
+        topic_key: {topic_key}
+        topic_name: {topic_name}
+        user_request: {user_request}
+        existing_has_content: {existing_has_content}
+        existing_content: {existing_content}
+        available_data_sources: {available_data_sources}
+
+        규칙:
+        - available_data_sources에 없는 자료를 새로 반영·추가하라는 요구는 불가
+        - 전부 불가 → feasibility_action=skip, mode=skip
+        - 일부만 불가 → restrict + effective_user_request에 불가 부분 제거본
+        - 그 외 pass; mode는 신규·재작성→generation, 수정·보완→correction
+        - skip/restrict 시 reason(한국어), reason_code 필수
+
+        {{
+          "mode": "generation|correction|skip",
+          "feasibility_action": "pass|restrict|skip",
+          "effective_user_request": "restrict일 때만",
+          "reason": "skip/restrict일 때",
+          "reason_code": "corpus_unavailable_skip|corpus_unavailable_restricted|SKIP_AMBIGUOUS",
+          "referenced_corpora": [],
+          "unavailable_corpora": []
+        }}
+  description: "user_request corpus feasibility + mode (단건)"
+
+request_analysis_batch:
+  variable_rules:
+    items_json:
+      when_missing: "[]"
+  messages:
+    - role: system
+      template: |
+        입력 항목마다 feasibility_action과 mode를 판단하세요.
+        마크다운·설명 없이 JSON 배열만 반환하세요.
+
+        입력: {items_json}
+
+        규칙(항목별):
+        - available_data_sources에 없는 자료 반영·추가 요구 불가
+        - 전부 불가 → skip/skip | 일부 불가 → restrict | 가능 → pass
+        - restrict: effective_user_request(재무+derived면 effective_derived_user_request도)에 불가 부분 제거본
+        - feasibility_action=skip → mode=skip
+
+        topic_key마다 1개, JSON 배열:
+        [
+          {{
+            "topic_key": "...",
+            "mode": "generation|correction|skip",
+            "feasibility_action": "pass|restrict|skip",
+            "effective_user_request": "restrict일 때",
+            "effective_derived_user_request": "financial+derived restrict일 때",
+            "reason": "...",
+            "reason_code": "...",
+            "referenced_corpora": [],
+            "unavailable_corpora": []
+          }}
+        ]
+  description: "user_request corpus feasibility + mode (배치)"
+
