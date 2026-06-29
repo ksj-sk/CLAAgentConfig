@@ -236,11 +236,18 @@ financial_correction:
       when_missing: "(일반 요구사항 없음)"
     quality_feedback:
       when_missing: "(수정 요구사항 없음)"
+    available_data_sources:
+      when_missing: "(가용 데이터 목록 없음)"
   messages:
     - role: system
       template: |
         다음 재무 분석 통합 보고서를 수정해주세요.
 
+        수정 가능 범위:
+        {available_data_sources}
+
+        [중요] 표/수치는 기존 보고서 범위 내에서만 수정하세요. 신규 코퍼스·타 섹션 표 추가 금지.
+    
         # 현재 보고서
         {financial_status}
 
