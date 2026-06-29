@@ -1,0 +1,108 @@
+# corpus_key ↔ 한/영 명칭·alias (가용 여부는 topic_corpus_resolver가 결정)
+required_input:
+  kor: 필수 입력 정보
+  aliases: [필수입력, 기업 기본정보, 필수 입력]
+  source_type: 필수입력
+
+business_report:
+  kor: 사업/감사보고서
+  aliases: [사업보고서, 감사보고서, 사업 감사보고서]
+  source_type: "4511"
+
+financial_analysis:
+  kor: 재무분석
+  aliases: [재무 분석, 재무데이터, 재무 데이터, 재무현황]
+  source_type: "4511"
+  primary_topic_hint: financial_status
+
+financial_analysis_summary:
+  kor: 재무분석 요약
+  aliases: [재무 요약, 재무 분석 요약]
+  source_type: "4511"
+  primary_topic_hint: financial_status
+
+financial_analysis_cashflow_ratios:
+  kor: 재무분석 현금흐름·비율
+  aliases: [현금흐름, 재무 비율]
+  source_type: "4511"
+  primary_topic_hint: financial_status
+
+quarterly_sales_status:
+  kor: 분기별 매출 현황
+  aliases: [분기별 매출, 분기 매출, 매출 추이, 매출 현황]
+  source_type: 업체요청
+
+major_supplier_status:
+  kor: 주요 매입처별 현황
+  aliases: [주요 매입처, 매입처 현황, 공급업체]
+  source_type: 업체요청
+
+major_customer_status:
+  kor: 주요 판매처별 현황
+  aliases: [주요 판매처, 판매처 현황, 고객 현황]
+  source_type: 업체요청
+
+sales_by_item_status:
+  kor: 품목별 매출 현황
+  aliases: [품목별 매출, 품목 매출]
+  source_type: 업체요청
+
+shareholding_structure:
+  kor: 지분 구조
+  aliases: [지분구조, 주주현황, 지분율, 지분 구조]
+  source_type: 업체요청
+
+organization_status:
+  kor: 조직 및 인력 현황
+  aliases: [조직 현황, 인력 현황, 조직도]
+  source_type: 업체요청
+
+profitability_analysis:
+  kor: 업체 수익성 분석
+  aliases: [수익성 분석, 수익성]
+  source_type: 업체요청
+
+exposure_status:
+  kor: 익스포저 현황
+  aliases: [익스포저, 노출 현황]
+  source_type: "5560"
+
+credit_status_by_category:
+  kor: 여신 종류별 현황
+  aliases: [여신 종류별, 종류별 여신]
+  source_type: "5560"
+
+credit_status_by_collateral:
+  kor: 담보별 여신 현황
+  aliases: [담보별 여신, 담보 여신]
+  source_type: "5560"
+
+credit_status_by_institution_crt:
+  kor: 금융기관별 여신 현황
+  aliases: [금융기관별, 타행 여신, 금융기관 여신]
+  source_type: "5560"
+
+loan_status_analysis:
+  kor: 차주별 대출금 현황 분석
+  aliases: [대출금 현황, 차주별 대출]
+  source_type: "5560"
+
+loan_trend_analysis:
+  kor: 차주별 대출금 추이 분석
+  aliases: [대출금 추이, 대출 추이]
+  source_type: "5560"
+
+approval_conditions:
+  kor: 승인조건
+  aliases: [승인 조건, 신용리스크 관리]
+  source_type: "5560"
+
+additional_docs:
+  kor: 기타 추가요청 자료
+  aliases: [추가요청, 추가 자료, 기타 자료]
+  source_type: 업체요청
+
+industry_trends:
+  kor: 산업 동향
+  aliases: [산업동향, 산업 트렌드, 산업 추세]
+  source_type: 산업동향
