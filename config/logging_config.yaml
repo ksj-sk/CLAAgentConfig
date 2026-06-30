@@ -87,6 +87,29 @@ chat_langgraph:
       date_format: "%Y-%m-%d %H:%M:%S"
       create_dir: true               # 로그 디렉토리 자동 생성
 
+agent_api:
+  logging:
+    level: "DEBUG"
+    
+    console:
+      enabled: true
+      level: "INFO"
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+    
+    file:
+      enabled: true
+      level: "DEBUG"
+      path: "logs/agent_api.log"
+      rotation_type: "timed"
+      when: "midnight"
+      interval: 1
+      backup_count: 0
+      max_bytes: 10485760
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+      date_format: "%Y-%m-%d %H:%M:%S"
+      create_dir: true
+
 parser_langgraph:
   logging:
     level: "DEBUG"                   # 더 상세한 로그
