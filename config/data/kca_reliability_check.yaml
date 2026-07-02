@@ -1,0 +1,11 @@
+version: "0.1"
+
+default_repeat_count: 5
+
+default_cases:
+  - lnApcGrpNo: "case1"
+    custNo: "case1"
+    crdtAsesNo: "case1"
+  - lnApcGrpNo: "case2"
+    custNo: "case2"
+    crdtAsesNo: "case2"
